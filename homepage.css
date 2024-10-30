@@ -7,18 +7,24 @@ body {
     background-color: rgb(149, 18, 18) !important;
 }
 
-.form-floating {
-    position: relative;
-}
-
-h1 {
-    color: white;
-}
-
 header {
     color: white;
 }
 
+nav {
+    background-color: black;
+}
+
 * {
     font-family: 'Comic Sans MS', 'Comic Sans', cursive;
+}
+
+.figurina {
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
 }
