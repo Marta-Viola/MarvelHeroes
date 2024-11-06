@@ -21,23 +21,27 @@
                 </div>
             </header>
             <main class="px-3">
-                <form>
+                <form class="px-5" id="registrationForm">
                     <h1 class="h3 mb-3 fw-normal">Vuoi Iscriverti?</h1>
                     <div class="form-floating m-1">
-                        <input type="text" class="form-control" id="floatingName" placeholder="name@example.com">
+                        <input type="text" class="form-control" id="floatingName" placeholder="MarvelFan" required>
                         <label for="floatingName">username</label>
+                        <div class="invalid-feedback">Il campo username è obbligatorio.</div>
                     </div>
                     <div class="form-floating m-1">
-                        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
                         <label for="floatingInput">email</label>
+                        <div class="invalid-feedback">Il campo email è obbligatorio.</div>
                     </div>
                     <div class="form-floating m-1">
-                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
                         <label for="floatingPassword">password</label>
+                        <div class="invalid-feedback">Il campo pasasword è obbligatorio</div>
                     </div>
                     <div class="form-floating m-1">
-                        <input type="text" class="form-control" id="floatingHero" placeholder="name@example.com">
+                        <input type="text" class="form-control" id="floatingHero" placeholder="Iron Man" required>
                         <label for="floatingHero">il tuo eroe preferito!</label>
+                        <div class="invalid-feedback">Il campo eroe preferito è obbligatorio</div>
                     </div>
                     <div class="m-1 form-floating">                    
                         <button class="btn btn-lg fw-bold bg-white w-100" type="submit">Iscriviti</button>
@@ -50,5 +54,64 @@
                 </p>
             </footer>
         </div>
+        <script src="/index.js"></script>
+        <script>
+            console.log('porco dio');
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('registrationForm');
+
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    let isValid = true;
+
+                    form.querySelectorAll('input').forEach(input => {
+                        if (!input.checkValidity()) {
+                            input.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                           input.classList.remove('is-invalid'); 
+                        }
+                    });
+
+                    if (isValid) {
+                        const userData = {
+                            username: document.getElementById('floatingName').value,
+                            password: document.getElementById('floatingPassword').value,
+                            email: document.getElementById('floatingInput').value,
+                            hero: document.getElementById('floatingHero').value
+                        };
+
+                        fetch('/signup', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(userData)
+                        })
+                        .then(responde => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                alert('Errore nella registrazione: ' + data.error);
+                            } else {
+                                alert('Registrazione completata con successo!');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('Errpre durante la registrazione.');
+                        });
+                    }
+                });
+
+                form.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', function() {
+                        if (input.checkValidity()) {
+                            input.classList.remove('is-invalid');
+                        }
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
