@@ -56,7 +56,6 @@
         </div>
         <script src="/index.js"></script>
         <script>
-            console.log('porco dio');
             document.addEventListener('DOMContentLoaded', function() {
                 const form = document.getElementById('registrationForm');
 
@@ -89,12 +88,16 @@
                             },
                             body: JSON.stringify(userData)
                         })
-                        .then(responde => response.json())
+                        .then(response => {
+                            console.log('HTTP Status:', response.status);
+                            return response.json();
+                        })
                         .then(data => {
                             if (data.error) {
                                 alert('Errore nella registrazione: ' + data.error);
                             } else {
                                 alert('Registrazione completata con successo!');
+                                //window.location.href = data.redirect;
                             }
                         })
                         .catch(error => {

@@ -49,19 +49,24 @@ app.get('/signup', (req, res) => {
     res.sendFile('signup.html');
 });
 
+//route di registrazione
 app.post('/signup', async (req, res) => {
+    console.log('ricevuta richesta POST to /signup');
     try {
-        console.log('ciao');
         const { username, password, email, hero} = req.body;
-        
+        console.log('User Data: ', req.body);
+
         //controlla se l'utente esiste già
         const existingUser = await User.findOne({ username });
         if (existingUser) {
+            console.log('Username already exists');
             return res.status(400).json({ error: 'Username già utilizzato' });
         }
         //cripta la password
         const hashedPassword = await bcrypt.hash(password, 10);
+        console.log('Hashed Password: ', hashedPassword);
         
+        //crea un nuovo utente
         const newUser = new User({ 
             username, 
             password: hashedPassword, 
@@ -69,9 +74,12 @@ app.post('/signup', async (req, res) => {
             hero
         });
 
+        //salva l'utente nel database
         await newUser.save();
+        console.log('User saved succesfully');
 
-        res.status(201).json({ message: 'Utente creato con successo' });
+        //reindirizza alla pagina di login
+        res.status(201).json({ message: 'Utente creato con successo', redirect: '/login' });
     } catch(err) {
         console.error('Errore nella registrazione', err);
         res.status(500).json({ error: 'Errore interno del server' });
@@ -79,6 +87,9 @@ app.post('/signup', async (req, res) => {
 });
 
 //Login
+app.get('/login', (req, res) => {
+    res.sendFile('login.html');
+})
 /*
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
