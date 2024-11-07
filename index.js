@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const app = express();
 const port = 5500;
@@ -10,7 +11,7 @@ const port = 5500;
 //Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('MarvelHeroes'));
+app.use(express.static('public'));
 
 //Connessione a MongoDB
 mongoose.connect('mongodb+srv://smarta:Grace11@cluster0.utcyj.mongodb.net/MarvelHeroes'
@@ -45,8 +46,7 @@ test.save().then(() => {
 
 //Signup
 app.get('/signup', (req, res) => {
-    console.log('vaffanculo a Bellandi')
-    res.sendFile('signup.html');
+    res.sendFile(path.join(__dirname, 'public', 'signup.html'));
 });
 
 //route di registrazione
@@ -88,8 +88,8 @@ app.post('/signup', async (req, res) => {
 
 //Login
 app.get('/login', (req, res) => {
-    res.sendFile('login.html');
-})
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 /*
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
