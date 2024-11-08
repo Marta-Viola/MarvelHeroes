@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
@@ -9,9 +10,24 @@ const app = express();
 const port = 5500;
 
 //Middleware
+app.use(cors({
+    origin: 'http://127.0.0.1:5500', //origine del client
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],   //permessi per i metodi
+    allowedHeaders: ['Content-Type'],
+    credentials: true
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(__dirname)); //rende pubblica la cartella locale
+
+//Handler per le richieste OPTIONS (Preflight)
+app.options('/signup', cors({
+    origin: 'http://127.0.0.1:5500',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true
+}));
 
 //Connessione a MongoDB
 mongoose.connect('mongodb+srv://smarta:Grace11@cluster0.utcyj.mongodb.net/MarvelHeroes'
@@ -62,6 +78,7 @@ app.post('/signup', async (req, res) => {
             console.log('Username already exists');
             return res.status(400).json({ error: 'Username già utilizzato' });
         }
+
         //cripta la password
         const hashedPassword = await bcrypt.hash(password, 10);
         console.log('Hashed Password: ', hashedPassword);
@@ -114,6 +131,9 @@ const auth = (req, res, next) => {
     }
 };
 */
+app.get('/', function(req, res) {
+    res.sendFile('/landing.html', {root: path.join(__dirname, '/public')});
+});
 
 app.listen(port, () => {
     console.log('Server is running on port ' + port);
