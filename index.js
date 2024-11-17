@@ -7,11 +7,18 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 
 const app = express();
-const port = 5500;
+const port = 3000;
+const allowedOrigins = ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://127.0.0.1:3000'];
 
 //Middleware
 app.use(cors({
-    origin: 'http://127.0.0.1:5500', //origine del client
+    origin: (origin, callback) => {
+        if (allowedOrigins.includes(origin) || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Origin not allpwed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],   //permessi per i metodi
     allowedHeaders: ['Content-Type'],
     credentials: true
@@ -22,8 +29,8 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.static(__dirname)); //rende pubblica la cartella locale
 
 //Handler per le richieste OPTIONS (Preflight)
-app.options('/signup', cors({
-    origin: 'http://127.0.0.1:5500',
+app.options('*', cors({
+    origin: 'http://127.0.0.1:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
     credentials: true
@@ -97,6 +104,7 @@ app.post('/signup', async (req, res) => {
 
         //reindirizza alla pagina di login
         res.status(201).json({ message: 'Utente creato con successo', redirect: '/login' });
+        //res.redirect('/login');
     } catch(err) {
         console.error('Errore nella registrazione', err);
         res.status(500).json({ error: 'Errore interno del server' });

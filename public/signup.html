@@ -21,7 +21,7 @@
                 </div>
             </header>
             <main class="px-3">
-                <form class="px-5" id="registrationForm">
+                <form class="px-5" id="registrationForm" action="/signup" method="POST">
                     <h1 class="h3 mb-3 fw-normal">Vuoi Iscriverti?</h1>
                     <div class="form-floating m-1">
                         <input type="text" class="form-control" id="floatingName" placeholder="MarvelFan" required>
@@ -54,7 +54,7 @@
                 </p>
             </footer>
         </div>
-        <script src="/index.js"></script>
+        
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const form = document.getElementById('registrationForm');
@@ -80,24 +80,34 @@
                             hero: document.getElementById('floatingHero').value
                         };
 
-                        fetch('/signup', {
+                        fetch('http://127.0.0.1:3000/signup', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(userData)
+                            body: JSON.stringify(userData),
+                            credentials: 'include'
                         })
                         .then(response => {
-                            console.log('HTTP Status:', response.status);
+                            if (!response.ok) {
+                                throw new Error('Errore nella risposta del server');
+                            }
                             return response.json();
                         })
                         .then(data => {
+                            /*
                             if (data.error) {
                                 alert('Errore nella registrazione: ' + data.error);
-                            } else {
+                            } else if (data.redirect) {
                                 alert('Registrazione completata con successo!');
                                 window.location.href = data.redirect;
                             }
+                            */
+                           if (data.redirect) {
+                                window.location.href = data.redirect;
+                           } else {
+                                console.log(data.message);
+                           }
                         })
                         .catch(error => {
                             console.error('Error:', error);
