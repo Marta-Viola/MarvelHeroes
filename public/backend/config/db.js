@@ -8,6 +8,9 @@ const connectDB = async() => {
         console.error('Error connecting to MongoDB', err);
         process.exit(1);
     }
+    mongoose.connection.on('error', (error) => {
+        console.error('Errore runtime del database: ', error);
+    });
 };
 
 export default connectDB;

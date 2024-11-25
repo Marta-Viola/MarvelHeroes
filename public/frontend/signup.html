@@ -55,67 +55,7 @@
             </footer>
         </div>
         
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const form = document.getElementById('registrationForm');
-
-                form.addEventListener('submit', function(event) {
-                    event.preventDefault();
-                    let isValid = true;
-
-                    form.querySelectorAll('input').forEach(input => {
-                        if (!input.checkValidity()) {
-                            input.classList.add('is-invalid');
-                            isValid = false;
-                        } else {
-                           input.classList.remove('is-invalid'); 
-                        }
-                    });
-
-                    if (isValid) {
-                        const userData = {
-                            username: document.getElementById('floatingName').value,
-                            password: document.getElementById('floatingPassword').value,
-                            email: document.getElementById('floatingInput').value,
-                            hero: document.getElementById('floatingHero').value
-                        };
-
-                        fetch('http://127.0.0.1:3000/api/signup', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(userData),
-                            credentials: 'include'
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Errore nella risposta del server');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                           if (data.redirect) {
-                                window.location.href = data.redirect;
-                           } else {
-                                console.log(data.message);
-                           }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Errpre durante la registrazione.');
-                        });
-                    }
-                });
-
-                form.querySelectorAll('input').forEach(input => {
-                    input.addEventListener('input', function() {
-                        if (input.checkValidity()) {
-                            input.classList.remove('is-invalid');
-                        }
-                    });
-                });
-            });
-        </script>
+        <script src="/frontend/js/access.js"></script>
+            
     </body>
 </html>

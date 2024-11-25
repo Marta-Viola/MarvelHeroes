@@ -42,46 +42,6 @@
                 </p>
             </footer>
         </div>
-
-        <script>
-            document.getElementById('loginForm').addEventListener('submit', async function (event) {
-                event.preventDefault(); //Evita il comportamento predefinito del form
-
-                //Raccogli i dati del form
-                const username = document.getElementById('floatingInput').value;
-                const password = document.getElementById('floatingPassword').value;
-
-                try {
-                    //Invio della richiesta POST al server
-                    const response = await fetch('http://127.0.0.1:3000/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ username, password })
-                    });
-
-                    if (!response.ok) {
-                        //Se il server restituisce un errore
-                        const errorText = await response.text();
-                        alert('Errore nel login: ' + errorText);
-                        return;
-                    }
-
-                    //Riceve il token JWT dal server
-                    const data = await response.json();
-                    const token = data.token;
-
-                    //Salva il token JWT nel local storage
-                    localStorage.setItem('jwtToken', token);
-
-                    //Redirrect alla homepage
-                    window.location.href = 'http://127.0.0.1:3000/homepage.html';    //configura la route /home
-                } catch (error) {
-                    console.error('Errore durante il login:' , error);
-                    alert('Errore durante il login. Controlla la console per maggiori dettagli.');
-                }
-            });
-        </script>
+        <script src="/frontend/js/access.js"></script>
     </body>
 </html>

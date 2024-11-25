@@ -7,7 +7,7 @@ const router = express.Router();
 
 //Registrazione
 router.post('/signup', async (req, res) => {
-    console.log('ricevuta richesta POST to /signup');
+    console.log('ricevuta richesta POST to /signup con body: ', req.body);
     try {
         const { username, password, email, hero} = req.body;
         console.log('User Data: ', req.body);
@@ -51,10 +51,11 @@ router.post('/login', async (req, res) => {
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ error: 'Credenziali non valide' });
         }
+        //Genera il token JWT
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
             expiresIn: '1h',
         });
-        res.json({ message: 'Login effettuato con successo', token });
+        res.json({ message: 'Login effettuato con successo', redirect: '/homepage.html', token });
     } catch (err) {
         console.error('Errore durante il login:', err);
         res.status(500).json({ error: 'Errore interno del server' });

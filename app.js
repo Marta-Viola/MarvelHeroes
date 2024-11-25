@@ -5,7 +5,7 @@ import path from 'path';
 import connectDB from './public/backend/config/db.js';
 import authRoutes from './public/backend/routes/authRoutes.js';
 import dotenv from 'dotenv';
-import authMiddleware from '/public/backend/middlewares/auth.js';
+import authMiddleware from './public/backend/middlewares/auth.js';
 
 //configurazioni
 dotenv.config();
@@ -31,9 +31,10 @@ app.use(cors({
 }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(process.cwd(), 'public')));
+app.use(express.json());
 
 //routes
-app.use('/api/auth', authRoutes);
+app.use('/api', authRoutes);
 
 //get
 app.get('/', (req, res) => {
