@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import authMiddleware from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -58,6 +59,20 @@ router.post('/login', async (req, res) => {
         res.json({ message: 'Login effettuato con successo', redirect: '/api/homepage', token });
     } catch (err) {
         console.error('Errore durante il login:', err);
+        res.status(500).json({ error: 'Errore interno del server' });
+    }
+});
+
+//recupera dati utente
+router.get('/user', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) {
+            return res.status(404).json({ error: 'Utente non trovato' });
+        }
+        res.json(user);
+    } catch (error) {
+        console.error('Errore durante il recupero dell\'utente:', error);
         res.status(500).json({ error: 'Errore interno del server' });
     }
 });

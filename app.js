@@ -37,7 +37,7 @@ app.use(express.json());
 app.use('/api', authRoutes);
 
 //get
-app.get('/', (req, res) => {
+app.get('/api/landing', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'frontend', 'landing.html'));
 });
 app.get('/api/signup', (req, res) => {
@@ -48,6 +48,21 @@ app.get('/api/login', (req, res) => {
 });
 app.get('/api/homepage', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'frontend', 'homepage.html'));
+});
+app.get('/api/myalbum', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'frontend', 'myalbum.html'));
+});
+app.get('/api/myprofile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'frontend', 'myprofile.html'));
+});
+app.get('/api/baratto', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'frontend', 'baratto.html'));
+});
+app.get('/api/compra_pac', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'frontend', 'compra_pac.html'));
+});
+app.get('/api/compra_cre', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'frontend', 'compra_cre.html'));
 });
 
 //avvio del server
