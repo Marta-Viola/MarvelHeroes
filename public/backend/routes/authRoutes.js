@@ -55,7 +55,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
             expiresIn: '1h',
         });
-        res.json({ message: 'Login effettuato con successo', redirect: '/homepage.html', token });
+        res.json({ message: 'Login effettuato con successo', redirect: '/api/homepage', token });
     } catch (err) {
         console.error('Errore durante il login:', err);
         res.status(500).json({ error: 'Errore interno del server' });

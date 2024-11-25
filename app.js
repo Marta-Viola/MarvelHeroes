@@ -43,10 +43,10 @@ app.get('/', (req, res) => {
 app.get('/api/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'frontend', 'signup.html'));
 });
-app.get('/login', (req, res) => {
+app.get('/api/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'frontend', 'login.html'));
 });
-app.get('/homepage', (req, res) => {
+app.get('/api/homepage', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'frontend', 'homepage.html'));
 });
 
