@@ -56,6 +56,23 @@
             </header>
             <main class="container py-4">
                 <h1 id="welcomeMessage"></h1>
+                <div class="row g-3" id="grid-container">
+                    <!--Figurine caricate dinamicamente-->
+                </div>
+
+                <nav aria-label="Paginazione figurine" class="d-flex justify-content-center mt-4">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <button class="page-link" id="prev-btn" disabled>Precedente</button>
+                        </li>
+                        <li class="page-item">
+                            <span class="page-link" id="page-info">Pagina n</span>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" id="next-btn">Successivo</button>
+                        </li>
+                    </ul>
+                </nav>
             </main>
             <footer class="mt-auto text-white-50">
                 <p>
