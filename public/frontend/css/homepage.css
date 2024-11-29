@@ -19,16 +19,6 @@ nav {
     font-family: 'Comic Sans MS', 'Comic Sans', cursive;
 }
 
-.figurina {
-    border: 1px solid #ccc;
-    background-color: #f8f9fa;
-    height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
 .active {
     color: yellow !important;
 }

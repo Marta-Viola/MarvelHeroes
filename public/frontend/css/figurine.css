@@ -1,0 +1,36 @@
+.figurina {
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.figurina:hover {
+    transform: scale(1.03);
+}
+.figurina-name {
+    z-index: 2;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.figurina-image {
+    transition: filter 0.3s ease;
+    max-height: 300px;
+    object-fit: cover;
+}
+
+.figurina-image:hover {
+    filter: brightness(80%);
+}
+
+.figurina-details {
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.figurina-details.show {
+    max-height: 500px;
+    opacity: 1;
+}
