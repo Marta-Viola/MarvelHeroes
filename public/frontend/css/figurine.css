@@ -2,21 +2,35 @@
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.3s ease;
+    padding: 0;
+    position: relative;
 }
 
 .figurina:hover {
     transform: scale(1.03);
 }
 .figurina-name {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
     z-index: 2;
     border-radius: 5px;
-    font-size: 0.9rem;
+    font-size: 1.8rem;
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.2rem 0.5rem;
+    white-space: nowrap;
+    text-align: right;
 }
 
 .figurina-image {
     transition: filter 0.3s ease;
     max-height: 300px;
     object-fit: cover;
+    width: 100%;
+    margin: 0;
+    display: block;
 }
 
 .figurina-image:hover {
@@ -28,6 +42,7 @@
     max-height: 0;
     opacity: 0;
     overflow: hidden;
+    padding: 0.5rem;
 }
 
 .figurina-details.show {

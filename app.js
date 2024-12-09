@@ -93,6 +93,12 @@ function getHash(ts, publicKey, privateKey) {
 
 app.get('/api/figurine', async (req, res) => {
     try{
+        //Parametri di query per paginazione
+        const page = parseInt(req.query.page) || 1; //Pagina richiesta (default: 1)
+        const limit = parseInt(req.query.limit) || 10;  //Elementi per pagina (default: 10)
+        const offset = (page - 1) * limit;  //Calcola l'offset
+
+        //fai una richiesta alle API Marvel
         const marvel_ts = process.env.MARVEL_TS || '1';
         const marvel_private = process.env.MARVEL_PRIVATE;
         const marvel_public = process.env.MARVEL_PUBLIC;
@@ -104,8 +110,8 @@ app.get('/api/figurine', async (req, res) => {
         //genera l'hash
         const marvel_hash = getHash(marvel_ts, marvel_public, marvel_private);
         
-        //costruisce l'URL dell'API
-        const url = `${process.env.MARVEL_URL || 'http://gateway.marvel.com/v1/public/characters'}?ts=${marvel_ts}&apikey=${marvel_public}&hash=${marvel_hash}`;    
+        //costruisce l'URL dell'API con limit e offset
+        const url = `${process.env.MARVEL_URL || 'http://gateway.marvel.com/v1/public/characters'}?ts=${marvel_ts}&apikey=${marvel_public}&hash=${marvel_hash}&limit=${limit}&offset=${offset}`;    
         
         //esegue la richiesta dell'API Marvel
         const response = await fetch(url);
@@ -117,7 +123,14 @@ app.get('/api/figurine', async (req, res) => {
         const data = await response.json();
 
         //invia i dati al client
-        res.json(data);
+        res.json({
+            data: {
+                results: data.data.results,
+                total: data.data.total, //numero totale di personaggi
+            },
+            page,
+            totalPages: Math.ceil(data.data.total / limit), //numero totale di pagine
+        });
     } catch (error) {
         console.error('Errore durante il recupero delle figurine:', error);
         res.status(500).json({ error: 'Errore durante il recupero delle figurine' });

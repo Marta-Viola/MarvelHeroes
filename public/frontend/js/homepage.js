@@ -35,14 +35,17 @@ async function initializeFigurineGrid(token) {
     const gridContainer = document.getElementById('grid-container');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
-    const pageInfo = document.getElementById
+    const pageInfo = document.getElementById('page-info');
 
     let currentPage = 1;
     const itemsPerPage = 10;
+    let totalPages = 0; //sarà aggiornato dinamicamente
 
     async function fetchFigurine(page) {
         try {
-            const response = await fetch('http://127.0.0.1:3000/api/figurine?page=${page}&limit=${itemsPerPage}', {
+            console.log(`Fetching page ${page} with limit ${itemsPerPage}`);    //log di debug
+
+            const response = await fetch(`http://127.0.0.1:3000/api/figurine?page=${page}&limit=${itemsPerPage}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -54,7 +57,18 @@ async function initializeFigurineGrid(token) {
 
             const data = await response.json();
             console.log('Dati ricevuti:', data);
+
+            //aggiorna il totale delle pagine
+            totalPages = data.totalPages;
+
+            // const results = data.data.results || [];
+            // const totalResults = data.data.total || 0;  //numero totale di personaggi
+            // const totalPages = Math.ceil(totalResults / itemsPerPage); //calcola il totale delle pagine
+
+            //mostra le figurine
             renderFigurine(data.data.results);
+
+            //aggiorna la paginazione
             updatePagination(data.page, data.totalPages);
         } catch (error) {
             console.error(error);
@@ -106,20 +120,23 @@ async function initializeFigurineGrid(token) {
 
     function updatePagination(page, totalPages) {
         currentPage = page;
-        pageInfo.textContent = 'Pagina ${page} di ${totalPages}';
+        pageInfo.textContent = `Pagina ${page} di ${totalPages}`;
         prevBtn.disabled = page === 1;
         nextBtn.disabled = page === totalPages;
     }
 
+    //Eventi per i pulsanti
     prevBtn.addEventListener('click', () => {
         if (currentPage > 1) {
-            fetchFigurine(currentPage - 1);
+            currentPage -= 1;
+            fetchFigurine(currentPage);
         }
     });
 
     nextBtn.addEventListener('click', () => {
         if (currentPage < totalPages) {
-            fetchFigurine(currentPage + 1);
+            currentPage += 1;
+            fetchFigurine(currentPage);
         }
     });
 
