@@ -24,13 +24,13 @@
                             <a href="myalbum" class="nav-link link-light px-2">Il Mio Album</a>
                         </li>
                         <li class="nav-item">
-                            <a href="baratto" class="nav-link link-light px-2">Baratto</a>
+                            <a href="compra_cre" class="nav-link link-light px-2">Acquista Crediti</a>
                         </li>
                         <li class="nav-item">
                             <a href="compra_pac" class="nav-link link-light px-2">Acquista Pacchetti</a>
                         </li>
                         <li class="nav-item">
-                            <a href="compra_cre" class="nav-link link-light px-2">Acquista Crediti</a>
+                            <a href="baratto" class="nav-link link-light px-2">Baratto</a>
                         </li>
                     </ul>
                     <ul class="nav">
@@ -38,7 +38,7 @@
                             <a href="myprofile" class="nav-link link-light px-2 active">Profilo</a>
                         </li>
                         <li class="nav-item">
-                            <a href="landing" class="nav-link link-light px-2">Logout</a>
+                            <a class="nav-link link-light px-2" id="logout-btn">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -49,13 +49,43 @@
                         <svg class="bi me-2" width="40" height="32"></svg>
                         <span class="fs-4 text-white">MarvelHeroes</span>
                     </a>
-                    <form class="col-12 col-lg-auto mb-3 mb-lg-0">
-                        <input type="search" class="form-control" placeholder="Cerca figurine..." aria-label="Search">
-                    </form>
                 </div>
             </header>
             <main class="container py-4">
-                <h1 id="welcomeMessage"></h1>
+                <h1 id="profileMessage"></h1>
+
+                <!-- Visualizzazione informazioni utente -->
+                 <section id="user-info">
+                    <h2>Le tue informazioni:</h2>
+                    <p><strong>username:</strong> <span id="username-place"></span></p>
+                    <p><strong>email:</strong> <span id="email-place"></span></p>
+                    <p><strong>eroe preferito:</strong> <span id="hero-place"></span></p>
+                 </section>
+
+                 <!-- Modifica informazioni utente -->
+                  <section id="edit-info">
+                    <h2>Modifica le tue informazioni:</h2>
+                    <form id="update-profile-form">
+                        <label>
+                            Cambia username:
+                            <input type="text" id="edit-username" placeholder="il tuo nuovo username">
+                        </label>
+                        <label>
+                            Cambia eroe preferito:
+                            <input type="text" id="edit-hero" placeholder="il tuo nuovo eroe preferito">
+                        </label>
+                        <label>
+                            Cambia Password:
+                            <input type="password" id="new-password" placeholder="la tua nuova password">
+                        </label>
+                        <label>
+                            Inserisci la tua vecchia password per confermare le modifiche:
+                            <input type="password" id="old-password" placeholder="La tua vecchia password" required>
+                        </label>
+                        
+                        <button type="submit">Modifica</button>
+                    </form>
+                  </section>
             </main>
             <footer class="mt-auto text-white-50">
                 <p>
@@ -63,6 +93,7 @@
                 </p>
             </footer>
         </div>
-        <script src="/frontend/js/homepage.js" defer></script>
+        
+        <script src="/frontend/js/myprofile.js"></script>
     </body>
 </html>

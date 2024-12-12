@@ -91,7 +91,7 @@ async function initializeFigurineGrid(token) {
                     alt="${item.name}" 
                     class="img-fluid figurina-image" 
                 >
-                <h5 class="figurina-name position-absolute bottom-0 end-0 bg-dark test-white px-2 py-1 m-2">
+                <h5 class="figurina-name position-absolute bottom-0 end-0 bg-dark text-white px-2 py-1 m-2">
                     ${item.name}
                 </h5>
                 
@@ -120,7 +120,7 @@ async function initializeFigurineGrid(token) {
 
     function updatePagination(page, totalPages) {
         currentPage = page;
-        pageInfo.textContent = `Pagina ${page} di ${totalPages}`;
+        pageInfo.textContent = `${page} / ${totalPages}`;
         prevBtn.disabled = page === 1;
         nextBtn.disabled = page === totalPages;
     }

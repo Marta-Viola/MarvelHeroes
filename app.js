@@ -136,3 +136,5 @@ app.get('/api/figurine', async (req, res) => {
         res.status(500).json({ error: 'Errore durante il recupero delle figurine' });
     }
 });
+
+app.use('/api/user', profileRoutes);    //prefisso per le rotte profilo

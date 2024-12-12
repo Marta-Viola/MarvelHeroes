@@ -22,3 +22,12 @@ nav {
 .active {
     color: yellow !important;
 }
+
+#page-nav {
+    background-color: transparent;
+}
+
+.page-link {
+    background-color: black;
+    color: white;
+}
