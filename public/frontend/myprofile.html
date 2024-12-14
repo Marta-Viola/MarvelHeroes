@@ -8,7 +8,7 @@
 
         <link href="/frontend/css/homepage.css" rel="stylesheet">
     </head>
-    <body class="d-flex h-100 text-center bg-darkred text-white">
+    <body class="d-flex text-center bg-darkred text-white">
         <!--Bootstrap Bundle con Popper (?)-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
         
@@ -55,7 +55,7 @@
                 <h1 id="profileMessage"></h1>
 
                 <!-- Visualizzazione informazioni utente -->
-                 <section id="user-info">
+                 <section id="user-info" class="text-start lh-lg">
                     <h2>Le tue informazioni:</h2>
                     <p><strong>username:</strong> <span id="username-place"></span></p>
                     <p><strong>email:</strong> <span id="email-place"></span></p>
@@ -63,27 +63,27 @@
                  </section>
 
                  <!-- Modifica informazioni utente -->
-                  <section id="edit-info">
+                  <section id="edit-info" class="text-start lh-lg">
                     <h2>Modifica le tue informazioni:</h2>
                     <form id="update-profile-form">
                         <label>
                             Cambia username:
-                            <input type="text" id="edit-username" placeholder="il tuo nuovo username">
-                        </label>
+                            <input class="form-control" type="text" id="edit-username" placeholder="il tuo nuovo username">
+                        </label> <br>
                         <label>
                             Cambia eroe preferito:
-                            <input type="text" id="edit-hero" placeholder="il tuo nuovo eroe preferito">
-                        </label>
+                            <input class="form-control" type="text" id="edit-hero" placeholder="il tuo nuovo eroe preferito">
+                        </label> <br>
                         <label>
                             Cambia Password:
-                            <input type="password" id="new-password" placeholder="la tua nuova password">
-                        </label>
+                            <input class="form-control" type="password" id="new-password" placeholder="la tua nuova password">
+                        </label> <br>
                         <label>
                             Inserisci la tua vecchia password per confermare le modifiche:
-                            <input type="password" id="old-password" placeholder="La tua vecchia password" required>
+                            <input class="form-control" type="password" id="old-password" placeholder="La tua vecchia password" required>
                         </label>
                         
-                        <button type="submit">Modifica</button>
+                        <button class="m-3 btn btn-lg fw-bold bg-white" type="submit">Modifica</button>
                     </form>
                   </section>
             </main>
@@ -94,6 +94,6 @@
             </footer>
         </div>
         
-        <script src="/frontend/js/myprofile.js"></script>
+        <script src="/frontend/js/profile.js"></script>
     </body>
 </html>

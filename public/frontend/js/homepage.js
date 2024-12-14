@@ -33,6 +33,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function initializeFigurineGrid(token) {
     const gridContainer = document.getElementById('grid-container');
+
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const pageInfo = document.getElementById('page-info');
@@ -41,11 +45,14 @@ async function initializeFigurineGrid(token) {
     const itemsPerPage = 10;
     let totalPages = 0; //sarà aggiornato dinamicamente
 
-    async function fetchFigurine(page) {
+    let searchQuery = ''; // Query di ricerca
+
+    async function fetchFigurine(page, query = '') {
         try {
             console.log(`Fetching page ${page} with limit ${itemsPerPage}`);    //log di debug
 
-            const response = await fetch(`http://127.0.0.1:3000/api/figurine?page=${page}&limit=${itemsPerPage}`, {
+            const response = await fetch(`http://127.0.0.1:3000/api/figurine?page=${page}&limit=${itemsPerPage}&name=${encodeURIComponent(query)}`, 
+            {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -139,6 +146,22 @@ async function initializeFigurineGrid(token) {
             fetchFigurine(currentPage);
         }
     });
+
+    // Listener per il form di ricerca
+    searchForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        searchQuery = searchInput.value.trim(); //ottiene la query di ricerca
+        currentPage = 1;
+        fetchFigurine(currentPage, searchQuery);    //Recupera i risultati filtrati
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            searchQuery = searchInput.value;    // Memorizza il valore di ricerca
+            currentPage = 1;    //resetta alla pagina 1 per una nuova ricerca
+            fetchFigurine(currentPage, searchQuery);    //richiama fetchFigurine
+        }
+    })
 
     //inizializza con la prima pagina
     fetchFigurine(currentPage);

@@ -6,7 +6,7 @@ import authMiddleware from '../middlewares/auth.js';
 const router = express.Router();
 
 // Rotta per ottenere il profilo utente
-router.get('/profile', authenticateToken, async (req, res) => {
+router.get('/profile', authMiddleware, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
         if (!user) {
@@ -24,7 +24,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
 });
 
 // Rotta per aggiornare il profilo utente
-router.put('/profile', authenticateToken, async (req, res) => {
+router.put('/profile', authMiddleware, async (req, res) => {
     try {
         const { username, email, hero, oldPassword, newPassword } = req.body;
 
@@ -57,4 +57,4 @@ router.put('/profile', authenticateToken, async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

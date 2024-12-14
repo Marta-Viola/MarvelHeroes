@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const updatedData = {
                 username: document.getElementById('edit-username').value || user.username,
-                email: document.getElementById('edit-email').value || user.email,
+                // email: document.getElementById('edit-email').value || user.email,
                 hero: document.getElementById('edit-hero').value || user.hero,
                 oldPassword: document.getElementById('old-password').value,
                 newPassword: document.getElementById('new-password').value || null,
