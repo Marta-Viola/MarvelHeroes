@@ -9,11 +9,11 @@ const router = express.Router();
 router.get('/', authMiddleware, async (req, res) => {
     try{
         //Parametri di query per paginazione
-        const page = parseInt(req.query.page) || 1; //Pagina richiesta (default: 1)
-        const limit = parseInt(req.query.limit) || 10;  //Elementi per pagina (default: 10)
+        // const page = parseInt(req.query.page) || 1; //Pagina richiesta (default: 1)
+        // const limit = parseInt(req.query.limit) || 10;  //Elementi per pagina (default: 10)
+        //const name = req.query.name || ''; //Ricerca per nome
         
-        const name = req.query.name || ''; //Ricerca per nome
-        
+        const { page = 1, limit = 10, name } = req.query;
         const offset = (page - 1) * limit;  //Calcola l'offset
 
         //fai una richiesta alle API Marvel

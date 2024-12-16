@@ -49,7 +49,7 @@ async function initializeFigurineGrid(token) {
 
     async function fetchFigurine(page, query = '') {
         try {
-            console.log(`Fetching page ${page} with limit ${itemsPerPage}`);    //log di debug
+            console.log(`Fetching page ${page} with query "${query}"}`);    //log di debug
 
             const response = await fetch(`http://127.0.0.1:3000/api/figurine?page=${page}&limit=${itemsPerPage}&name=${encodeURIComponent(query)}`, 
             {
@@ -68,14 +68,19 @@ async function initializeFigurineGrid(token) {
             //aggiorna il totale delle pagine
             totalPages = data.totalPages;
 
-            // const results = data.data.results || [];
-            // const totalResults = data.data.total || 0;  //numero totale di personaggi
-            // const totalPages = Math.ceil(totalResults / itemsPerPage); //calcola il totale delle pagine
+            // Mostra un messaggio se non ci sono risultati
+            if (data.data.results.length === 0) {
+                renderNoResultsMessage();    // funzione per il messaggio
+                totalPages = 0;
+                updatePagination(0, 0);
+                return;   
+            }
 
-            //mostra le figurine
+            //se ci sono risultati aggiorna la griglia
             renderFigurine(data.data.results);
 
             //aggiorna la paginazione
+            totalPages = data.totalPages;
             updatePagination(data.page, data.totalPages);
         } catch (error) {
             console.error(error);
@@ -128,22 +133,30 @@ async function initializeFigurineGrid(token) {
     function updatePagination(page, totalPages) {
         currentPage = page;
         pageInfo.textContent = `${page} / ${totalPages}`;
-        prevBtn.disabled = page === 1;
-        nextBtn.disabled = page === totalPages;
+        prevBtn.disabled = page <= 1;
+        nextBtn.disabled = page >= totalPages;
+    }
+
+    function renderNoResultsMessage() {
+        gridContainer.innerHYML = '';   //svuota la griglia
+        const message = document.createElement('p');
+        message.textContent = 'Nessun risultato trovato.';
+        message.className = 'text-center text-muted mt-4';
+        gridContainer.appendChild(message);
     }
 
     //Eventi per i pulsanti
     prevBtn.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage -= 1;
-            fetchFigurine(currentPage);
+            fetchFigurine(currentPage, searchQuery);    //passa la query di ricerca
         }
     });
 
     nextBtn.addEventListener('click', () => {
         if (currentPage < totalPages) {
             currentPage += 1;
-            fetchFigurine(currentPage);
+            fetchFigurine(currentPage, searchQuery);
         }
     });
 
@@ -155,9 +168,10 @@ async function initializeFigurineGrid(token) {
         fetchFigurine(currentPage, searchQuery);    //Recupera i risultati filtrati
     });
 
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            searchQuery = searchInput.value;    // Memorizza il valore di ricerca
+    searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); //evita il comportamento predefinito
+            searchQuery = searchInput.value.trim();    // aggiorna la variabile con la query dell'utente
             currentPage = 1;    //resetta alla pagina 1 per una nuova ricerca
             fetchFigurine(currentPage, searchQuery);    //richiama fetchFigurine
         }
