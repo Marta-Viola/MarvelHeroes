@@ -66,7 +66,7 @@ async function initializeFigurineGrid(token) {
             console.log('Dati ricevuti:', data);
 
             //aggiorna il totale delle pagine
-            totalPages = data.totalPages;
+            // totalPages = data.totalPages;
 
             // Mostra un messaggio se non ci sono risultati
             if (data.data.results.length === 0) {
@@ -87,6 +87,35 @@ async function initializeFigurineGrid(token) {
             alert('Errore durante il caricamento delle figurine.');
         }
     }
+
+    //Funzione per resettare la griglia
+    function resetGrid() {
+        gridContainer.innerHTML = '';   //Svuota la griglia
+        renderNoResultsMessage();   //mostra il messaggio per default
+        totalPages = 0;
+        updatePagination(0, 0); //Disabilita la paginazione
+    }
+
+    //Funzione per gestire l'input nella barra di ricerca
+    searchForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const newQuery = searchInput.value.trim();
+
+        if (newQuery === searchQuery) {
+            //se la query non cambia, non eseguire una nuova ricerca
+            return;
+        }
+
+        //aggiorna la query e resetta la griglia
+        searchQuery = newQuery;
+        currentPage = 1;
+        resetGrid();
+
+        if (searchQuery) {
+            //recupera le figurine se la query non è vuota
+            fetchFigurine(currentPage, searchQuery);
+        }
+    });
 
     function renderFigurine(figurine) {
         gridContainer.innerHTML = ''; // Pulisci la griglia precedente
@@ -138,11 +167,13 @@ async function initializeFigurineGrid(token) {
     }
 
     function renderNoResultsMessage() {
-        gridContainer.innerHYML = '';   //svuota la griglia
-        const message = document.createElement('p');
-        message.textContent = 'Nessun risultato trovato.';
-        message.className = 'text-center text-muted mt-4';
-        gridContainer.appendChild(message);
+        const gridContainer = document.getElementById('grid-container');
+        gridContainer.innerHTML = '';   //svuota la griglia
+
+        const noResultsMessage = document.createElement('p');
+        noResultsMessage.textContent = 'Nessun risultato trovato.';
+        noResultsMessage.className = 'text-center text-muted mt-3';
+        gridContainer.appendChild(noResultsMessage);
     }
 
     //Eventi per i pulsanti
