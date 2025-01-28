@@ -16,6 +16,7 @@ router.get('/profile', authMiddleware, async (req, res) => {
             username: user.username,
             email: user.email,
             hero: user.hero || 'Non specificato',
+            credits: user.credits
         });
     } catch (error) {
         console.error(error);

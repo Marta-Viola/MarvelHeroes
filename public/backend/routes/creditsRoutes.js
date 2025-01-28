@@ -4,16 +4,18 @@ import authMiddleware from '../middlewares/auth.js';
 
 const router = express.Router();
 
-router.post('/addCredits', authMiddleware, async (requestAnimationFrame, res) => {
-    const { creditsToAdd } = req.body;
+// Rotta POST per acquistare crediti
+// Endpoint: /api/user/credits
+router.post('/credits', authMiddleware, async (req, res) => {
+    const userId = req.user.id;
+    const { amount } = req.body;
 
-    if (!creditsToAdd || !Number.isInteger(creditsToAdd) || creditsToAdd <= 0) {
+    if (!amount || !Number.isInteger(amount) || amount <= 0) {
         return res.status(400).json({ error: 'Numero di crediti nnon valido.' });
     }
 
+    // aggiorna i crediti dell'utente nel database
     try {
-        // Trova l'utente loggato
-        const userId = req.user.id;
         const user = await User.findById(userId);
 
         if (!user) {
@@ -21,13 +23,13 @@ router.post('/addCredits', authMiddleware, async (requestAnimationFrame, res) =>
         }
 
         //Aggiungi i crediti
-        user.credits += creditsToAdd;
+        user.credits += amount;
 
         //Salva le modifiche
         await user.save();
 
         // Invia la risposta
-        res.json({ message: 'Crediti aggiunti con successo.', newBalance: user.credits });
+        res.json({ message: 'Crediti aggiunti con successo.', credits: user.credits });
     } catch (error) {
         console.error('Errore durante l\'aggiunta dei crediti:', error);
         res.status(500).json({ error: 'Errore durante l\'aggiunta dei crediti.' });

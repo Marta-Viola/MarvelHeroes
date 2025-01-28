@@ -1,46 +1,34 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const creditsInput = document.getElementById('credits-input');
-    const buyCreditsBtn = document.getElementById('but-credits-btn');
-    const messageContainer = document.getElementById('message-container');
-
-    //Recupera il token di autenticazione
-    const token = localStorage.getItem('token');
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('jwtToken');
+    console.log('Token:', token);
 
     if (!token) {
-        messageContainer.innerHTML = '<p class="text-danger">Accesso non autorizzato. Effettua il login.</p>';
+        alert('Devi essere loggato per accedere a questa pagina.');
+        window.location.href = '/api/login';
         return;
     }
 
-    buyCreditsBtn.addEventListener('click', async () => {
-        const creditsToAdd = parseInt(creditsInput.value);
+    try {
+        //richiesta per recuperare le info dell'utente
+        const response = await fetch('http://127.0.0.1:3000/api/user/profile', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-        if (!creditsToAdd || creditsToAdd <= 0) {
-            messageContainer.innerHTML = '<p class="text-danger">Inserisci un numero valido di crediti.</p>';
-            return;
+        if (!response.ok) {
+            throw new Error('Errore durante il recupero delle informazione dell\'utente.');
         }
 
-        try {
-            const response = await fetch('http://127.0.0.1:3000/api/user/addCredits', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ creditsToAdd }),
-            });
+        const userData = await response.json();
+        console.log('Dati utente:', userData);
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Errore durante l\'acquisto dei crediti.');
-            }
-
-            messageContainer.innerHTML = `<p class="text-success">Crediti aggiunti con successo! Saldo attuale: ${data.newBalance} crediti.</p>`;
-            creditsInput.value = ''; // Resetta l'input
-        } catch (error) {
-            console.error(error);
-            messageContainer.innerHTML = `<p class="text-danger">${error.message}</p>`;
-        }
-    })
-})
-//NOT FINISHED!!! ARRIVATA AL PUNTO COLLEGAMENTO DELLO SCRIPT ALLA PAGINA
+        //mostra i crediti dell'utente sulla pagina
+        const creditsElement = document.getElementById('credits');
+        creditsElement.textContent = `Crediti attuali: ${userData.credits}`;
+    } catch (error) {
+        console.error('Errore durante l\'acquisto dei crediti:', error);
+        alert('Errore durante il recupero delle informazioni dell\'utente. Reindirizzamento al login');
+        window.location.href = '/api/login';
+    }
+});

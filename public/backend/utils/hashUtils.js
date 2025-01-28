@@ -5,4 +5,4 @@ export function getHash(ts, publicKey, privateKey) {
         .createHash('md5')
         .update(ts + privateKey + publicKey)
         .digest('hex');
-}
+};
