@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Decodifica e usa il token per recuperare i dati utente
-        const userResponse = await fetch('http://127.0.0.1:3000/api/user', {
+        const userResponse = await fetch('http://127.0.0.1:3000/api/auth/user', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

@@ -1,8 +1,6 @@
 import User from '../models/User.js';
 // import jwt from 'jsonwebtoken';
 // import bcrypt from 'bcryptjs';
-// import jwt from 'jsonwebtoken';
-// import User from '../models/User.js';
 // import authMiddleware from '../middlewares/auth.js';
 import { hashPassword, comparePassword, generateToken } from '../utils/authUtils.js';
 

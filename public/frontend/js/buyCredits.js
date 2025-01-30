@@ -1,34 +1,69 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const token = localStorage.getItem('jwtToken');
-    console.log('Token:', token);
+    const buyButton = document.getElementById("buy-credits-btn");
+    const creditsInput = document.getElementById("credits-input");
+    const userCreditsDisplay = document.getElementById("credits");
 
-    if (!token) {
-        alert('Devi essere loggato per accedere a questa pagina.');
-        window.location.href = '/api/login';
-        return;
-    }
-
-    try {
-        //richiesta per recuperare le info dell'utente
-        const response = await fetch('http://127.0.0.1:3000/api/user/profile', {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error('Errore durante il recupero delle informazione dell\'utente.');
+    buyButton.addEventListener("click", async () => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            alert('Devi essere loggato per accedere a questa pagina.');
+            window.location.href = '/api/login';
+            return;
+        }
+        const amount = parseInt(creditsInput.value, 10);
+        if (!amount || amount <= 0) {
+            alert("Inserisci un numero valido di crediti.");
+            return;
         }
 
-        const userData = await response.json();
-        console.log('Dati utente:', userData);
+        try {
+            const response = await fetch("/api/user/credits", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ amount })
+            });
 
-        //mostra i crediti dell'utente sulla pagina
-        const creditsElement = document.getElementById('credits');
-        creditsElement.textContent = `Crediti attuali: ${userData.credits}`;
-    } catch (error) {
-        console.error('Errore durante l\'acquisto dei crediti:', error);
-        alert('Errore durante il recupero delle informazioni dell\'utente. Reindirizzamento al login');
-        window.location.href = '/api/login';
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(data.message);
+                userCreditsDisplay.textContent = `Crediti attuali: ${data.credits}`;
+                creditsInput.value = '';    // pulisce il contenuto dell'input dopo l'acquisto.
+            } else {
+                alert(data.error);
+            }
+        } catch (error) {
+            console.error("Errore durante l\'acquisto dei crediti:", error);
+            alert("Si è verificato un errore. Riprova.");
+        }
+    });
+
+    // Funzione per ottenere i crediti attuali dell'utente
+    async function fetchUserCredits() {
+        const token = localStorage.getItem("jwtToken");
+
+        try {
+            const response = await fetch('/api/user/profile', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            
+            const userData = await response.json();
+            console.log('Dati utente:', userData);
+            
+           if (response.ok) {
+            userCreditsDisplay.textContent = `Crediti attuali: ${userData.credits}`;
+           } else {
+            console.error("Errore nel recupero dei crediti:", userData.error);
+           }
+        } catch (error) {
+            console.error('Errore nel recupero dei crediti:', error);
+        }
     }
+
+    fetchUserCredits();
 });

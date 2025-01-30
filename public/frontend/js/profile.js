@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Ottiene informazioni utente
-        const response = await fetch('/api/user/profile', {
+        const response = await fetch('/api/auth/user', {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

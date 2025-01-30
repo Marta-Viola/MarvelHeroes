@@ -40,8 +40,9 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 app.use(express.json());
 
 //routes
-app.use('/api', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/user', creditsRoutes);
+app.use('/api/user', profileRoutes);
 
 //get
 app.get('/api/landing', (req, res) => {
@@ -142,5 +143,3 @@ app.use('/api/figurine', figurineRoutes);
 //         res.status(500).json({ error: 'Errore durante il recupero delle figurine' });
 //     }
 // });
-
-app.use('/api/user', profileRoutes);    //prefisso per le rotte profilo
