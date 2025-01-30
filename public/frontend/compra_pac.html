@@ -49,13 +49,18 @@
                         <!-- <svg class="bi me-2" width="40" height="32"></svg> -->
                         <span class="fs-4 text-white">MarvelHeroes</span>
                     </a>
-                    <form class="col-12 col-lg-auto mb-3 mb-lg-0">
+                    <!-- <form class="col-12 col-lg-auto mb-3 mb-lg-0">
                         <input type="search" class="form-control" placeholder="Cerca figurine..." aria-label="Search">
-                    </form>
+                    </form> -->
                 </div>
             </header>
             <main class="container py-4">
-                <h1 id="welcomeMessage"></h1>
+                <div class="container">
+                    <h1>Acquista un Pacchetto di Figurine</h1>
+                    <p id="credits">Crediti: --</p>
+                    <button id="buy-pack">Acquista un pacchetto (1 credito)</button>
+                    <div id="pack-container" class="pack-container"></div>
+                </div>
             </main>
             <footer class="mt-auto text-white-50">
                 <p>
@@ -63,6 +68,6 @@
                 </p>
             </footer>
         </div>
-        <script src="/frontend/js/homepage.js" defer></script>
+        <script src="/frontend/js/buyPacks.js" defer></script>
     </body>
 </html>

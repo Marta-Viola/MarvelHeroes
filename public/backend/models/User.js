@@ -5,9 +5,14 @@ const UserSchema = new mongoose.Schema({
     password: {type: String, required: true},
     email: {type: String, required: true, unique: true},
     hero: {type: String, required: true},
-    credits: {type: Number, default: 0}
+    credits: {type: Number, default: 0},
+    figurinePossedute: [
+        {
+            idPersonaggio: { type: Number, required: true },
+            nome: { type: String, required: true }
+        }
+    ]
 });
 
 const User = mongoose.model('User', UserSchema);
-
 export default User;

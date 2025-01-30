@@ -12,6 +12,7 @@ import fetch from 'node-fetch';
 import crypto from 'crypto';
 import figurineRoutes from './public/backend/routes/figurineRoutes.js';
 import creditsRoutes from './public/backend/routes/creditsRoutes.js';
+import packsRoutes from './public/backend/routes/packsRoutes.js';
 
 //configurazioni
 dotenv.config();
@@ -43,6 +44,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/user', creditsRoutes);
 app.use('/api/user', profileRoutes);
+app.use('/api/packs', authMiddleware, packsRoutes);
 
 //get
 app.get('/api/landing', (req, res) => {
