@@ -18,31 +18,58 @@ export const getRandomMarvelCharacters = async () => {
         // Genera l'hash per l'autenticazione
         const marvel_hash = getHash(marvel_ts, marvel_public, marvel_private);
 
-        // Definisce il numero di personaggi da estrarre
-        const limit = 5;
-
-        // Genera un offset casuale per ottenere 5 personaggi casuali
         const maxCharacters = 1564; // Numero di perssonaggi nell'API Marvel
-        const randomOffset = Math.floor(Math.random() * (maxCharacters - limit));
+        const promises = [];
 
-        // Costruisce l'URL della richiesta
-        const url = `${marvel_url}?ts=${marvel_ts}&apikey=${marvel_public}&hash=${marvel_hash}&limit=${limit}&offset=${randomOffset}`;
+        for (let i = 0; i < 5; i++) {
+            // genera un offset casuale per ogni richiesta
+            const randomOffset = Math.floor(Math.random() * maxCharacters);
 
-        // Esegue la richiesta all'API Marvel
-        const response = fetch(url);
-        if (!response.ok) {
-            throw new Error(`Errore API: ${response.statusText}`);
+            // costruisce l'URL con un offset casuale
+            const url = `${marvel_url}?ts=${marvel_ts}&apikey=${marvel_public}&hash=${marvel_hash}&limit=1&offset=${randomOffset}`;
+
+            // aggiunge la promessa della fetch alla lista
+            promises.push(fetch(url).then(res => res.json()));
         }
 
-        const data = await response.json();
+        // Esegue tutte le richieste in parallelo
+        const results = await Promise.all(promises);
 
-        // Estrae i personaggi ricevuti
-        const characters = data.data.results.map(character => ({
-            idPersonaggio: character.id,
-            nome: character.name
-        }));
+        // estrae i dati utili dai risultati
+        const characters = results
+            .map(response => response.data.results[0])  // primo risultato di ogni richiesta
+            .filter(character => character)             //filtra eventuali null o undefined
+            .map(character => ({
+                idPersonaggio: character.id,
+                nome: character.name,
+                immagine: character.thumbnail ? `${character.thumbnail.path}.${character.thumbnail.extension}` : null,
+                descrizione: character.description
+            }));
 
         return characters;
+
+        // // Esegue la richiesta all'API Marvel
+        // //const response = await fetch(url);
+        // console.log("Status della risposta:", response.status); // debug Status
+
+        // if (!response.ok) {
+        //     throw new Error(`Errore API: ${response.statusText} - ${response.statusText}`);
+        // }
+
+        // const data = await response.json();
+        // //console.log("Risultato JSON ricevuto:", JSON.stringify(data, null, 2)); // debug JSON
+
+        // if (!data || !data.data || !data.data.results) {
+        //     throw new Error('Risposta API non valida');
+        // }
+
+        // // Estrae i personaggi ricevuti
+        // const characters = data.data.results.map(character => ({
+        //     idPersonaggio: character.id,
+        //     nome: character.name
+        // }));
+
+        // return characters;
     } catch (error) {
         console.error('Errore durante il recupero delle figurine:', error);
         throw new Error('Errore durante il recupero delle figurine');
@@ -87,8 +114,8 @@ export const buyPack = async (req, res) => {
 
         res.json({
             message: 'Pacchetto acquistato con successo!',
-            credits: user.credits,
-            newFigurine
+            updatedCredits: user.credits,
+            cards: newFigurine
         });
     } catch (error) {
         console.error('Errore durante l\'acquisto del pacchetto:', error);
