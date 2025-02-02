@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
         await newUser.save();
 
         //reindirizza alla pagina di login
-        //res.status(201).json({ message: 'Utente creato con successo', redirect: '/api/login' });
+        res.status(201).json({ message: 'Utente creato con successo', redirect: '/api/login' });
     } catch(err) {
         console.error('Errore nella registrazione', err);
         res.status(500).json({ error: 'Errore interno del server' });

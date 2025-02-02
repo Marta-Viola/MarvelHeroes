@@ -50,12 +50,30 @@
                         <span class="fs-4 text-white">MarvelHeroes</span>
                     </a>
                     <form class="col-12 col-lg-auto mb-3 mb-lg-0">
-                        <input type="search" class="form-control" placeholder="Cerca figurine..." aria-label="Search">
+                        <input id="search-input" type="search" class="form-control" placeholder="Cerca figurine..." aria-label="Search">
                     </form>
                 </div>
             </header>
             <main class="container py-4">
-                <h1 id="welcomeMessage"></h1>
+                <h1>Il Mio Album</h1>
+
+                <!-- Contenitore delle figurine -->
+                 <div id="album-container" class="grid-container"></div>
+
+                <!-- Paginazione -->
+                <nav aria-label="Paginazione figurine" class="d-flex justify-content-center mt-4" id="page-nav">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <button class="page-link" id="prev-btn" disabled>Previous</button>
+                        </li>
+                        <li class="page-item">
+                            <span class="page-link" id="page-info"></span>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link" id="next-btn">Next</button>
+                        </li>
+                    </ul>
+                </nav>
             </main>
             <footer class="mt-auto text-white-50">
                 <p>
@@ -63,6 +81,6 @@
                 </p>
             </footer>
         </div>
-        <script src="/frontend/js/homepage.js" defer></script>
+        <script src="/frontend/js/album.js" defer></script>
     </body>
 </html>

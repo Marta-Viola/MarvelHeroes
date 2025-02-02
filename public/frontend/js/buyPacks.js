@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 <!-- Dettagli nascosti -->
                 <div class="figurina-details collapse mt-2">
-                    <p><strong>Descrizione:</strong> ${item.descrizione || "Descrizione non disponibile"}</p>
+                    <p><strong>Description:</strong> ${item.descrizione || "Description not available"}</p>
                 </div>
             </div>
             `;

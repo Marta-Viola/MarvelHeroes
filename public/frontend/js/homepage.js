@@ -42,14 +42,14 @@ async function initializeFigurineGrid(token) {
     const pageInfo = document.getElementById('page-info');
 
     let currentPage = 1;
-    const itemsPerPage = 10;
+    const itemsPerPage = 12;
     let totalPages = 0; //sarà aggiornato dinamicamente
 
     let searchQuery = ''; // Query di ricerca
 
     async function fetchFigurine(page, query = '') {
         try {
-            console.log(`Fetching page ${page} with query "${query}"}`);    //log di debug
+            console.log(`Fetching page ${page} with query "${query}", totalPages = ${totalPages}`);    //log di debug
 
             const response = await fetch(`http://127.0.0.1:3000/api/figurine?page=${page}&limit=${itemsPerPage}&name=${encodeURIComponent(query)}`, 
             {
@@ -66,22 +66,23 @@ async function initializeFigurineGrid(token) {
             console.log('Dati ricevuti:', data);
 
             //aggiorna il totale delle pagine
-            // totalPages = data.totalPages;
+            totalPages = data.totalPages;
 
             // Mostra un messaggio se non ci sono risultati
-            if (data.data.results.length === 0) {
+            if (data.results.length === 0) {
                 renderNoResultsMessage();    // funzione per il messaggio
-                totalPages = 0;
+                // totalPages = 0;
                 updatePagination(0, 0);
                 return;   
             }
 
             //se ci sono risultati aggiorna la griglia
-            renderFigurine(data.data.results);
+            renderFigurine(data.results);
 
             //aggiorna la paginazione
             totalPages = data.totalPages;
             updatePagination(data.page, data.totalPages);
+
         } catch (error) {
             console.error(error);
             alert('Errore durante il caricamento delle figurine.');
@@ -138,7 +139,7 @@ async function initializeFigurineGrid(token) {
                 
                 <!-- Dettagli nascosti -->
                 <div class="figurina-details collapse mt-2">
-                    <p><strong>Descrizione:</strong> ${item.description || "Descrizione non disponibile"}</p>
+                    <p><strong>Description:</strong> ${item.description || "Description not available"}</p>
                     <p><strong>Comics:</strong> ${item.comics.available}</p>
                     <p><strong>Series:</strong> ${item.series.available}</p>
                     <p><strong>Stories:</strong> ${item.stories.available}</p>

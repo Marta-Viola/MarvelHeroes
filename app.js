@@ -13,6 +13,7 @@ import crypto from 'crypto';
 import figurineRoutes from './public/backend/routes/figurineRoutes.js';
 import creditsRoutes from './public/backend/routes/creditsRoutes.js';
 import packsRoutes from './public/backend/routes/packsRoutes.js';
+import albumRoutes from './public/backend/routes/albumRoutes.js';
 
 //configurazioni
 dotenv.config();
@@ -45,6 +46,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', creditsRoutes);
 app.use('/api/user', profileRoutes);
 app.use('/api/packs', authMiddleware, packsRoutes);
+app.use('/api/album', albumRoutes);
 
 //get
 app.get('/api/landing', (req, res) => {
