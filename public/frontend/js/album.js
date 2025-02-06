@@ -1,87 +1,149 @@
-// gestisce la fetch e il rendering delle figurine
-document.addEventListener('DOMContentLoaded', () => {
-    const albumContainer = document.getElementById('album-container');
-    const searchInput = document.getElementById('search-input');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-    const pageInfo = document.getElementById('page-info');
+document.addEventListener("DOMContentLoaded", () => {
+    // elementi della pagina
+    const albumContainer = document.getElementById("album-container");
+    
+    const searchInput = document.getElementById("search-input");
+    const searchForm = document.getElementById("search-form");
+
+    const prevButton = document.getElementById("prev-btn");
+    const nextButton = document.getElementById("next-btn");
+    const pageInfo = document.getElementById("page-info");
 
     let currentPage = 1;
-    const itemsPerPage = 12;
     let totalPages = 1;
+    let query = "";
 
-    async function fetchAlbum(page, query = '') {
+    // funzione per ottenere i parametri dell'URL
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param) || "";
+    }
+
+    // funzione per aggiornare l'URL senza ricaricare la pagina
+    function updateURL(page, query) {
+        const url = new URL(window.location);
+        url.searchParams.set("page", page);
+        url.searchParams.set("name", query);
+        window.history.pushState({}, "", url);  // aggiorna URL
+    }
+
+    // funzione per ottenere le figurine possedute
+    async function fetchAlbum(page, query) {
         try {
-            // Recupera il token dalla memoria locale
-            const token = localStorage.getItem('jwtToken');
-            if (!token) {
-                window.location.href = '/api/login';
-                return;
-            }
-            
-            const response = await fetch(`/api/album?page=${page}&limit=${itemsPerPage}&name=${encodeURIComponent(query)}`, {
-                headers: { Authorization: `Bearer ${token}` 
-                },
+            const token = localStorage.getItem("jwtToken");
+
+            // richiesta al backend
+            const response = await fetch(`/api/album?page=${page}&limit=12&name=${encodeURIComponent(query)}`, {
+                headers: { Authorization: `Bearer ${token}` },
             });
+            console.log('check fetch', response.ok);
 
             if (!response.ok) {
-                throw new Error('Errore durante il recupero dell\'album');
+                throw new Error("Errore durante il recupero dell\'album");
             }
 
             const data = await response.json();
-            console.log('data: ', data);
-            console.log('data.figurine:', data.figurine);
+            //const searchQuery = data.searchQuery;
 
-            renderAlbum(data.figurine);
+            console.log('check data', data);
+
+            // se non ci sono risultati, mostra un messaggio
+            if (data.data.length === 0) {
+                albumContainer.innerHTML = "<p>Nessuna figurina trovata.</p>";
+            } else {
+                renderAlbum(data.data);
+            }
+
+            currentPage = data.page;
             totalPages = data.totalPages;
-            updatePagination(page, totalPages);
-
+            updatePagination(currentPage, totalPages);
         } catch (error) {
             console.error(error);
-            alert('Errore durante il caricamento dell\'album');
+            alert("Errore durante il caricamento dell\'album");
         }
     }
 
+    // funzione per mostrare le figurine in pagina
     function renderAlbum(figurine) {
         albumContainer.innerHTML = '';
         figurine.forEach(item => {
             const col = document.createElement('div');
-            col.classList.add('col-12', 'col-md-6', 'col-lg-4', 'col-xl-3');
+             col.classList.add('col-12', 'col-md-6', 'col-lg-4', 'col-xl-3');
 
-            col.innerHTML = `
-            <div class="figurina border p-3 mb-3 shadow-sm position-relative text-center">
-                <img src="${item.thumbnail.path}.${item.thumbnail.extension}" alt="${item.name}" class="img-fluid figurina-image">
-                <h5 class="figurina-name">${item.name}</h5>
-            </div>`;
+             col.innerHTML = `
+             <div class="figurina border p-3 mb-3 shadow-sm position-relative text-center">
+                 <img src="${item.thumbnail.path}.${item.thumbnail.extension}" alt="${item.name}" class="img-fluid figurina-image">
+                 <h5 class="figurina-name">${item.name}</h5>
 
-            albumContainer.appendChild(col);
+                 <!-- Dettagli nascosti -->
+                 <div class="figurina-details collapse mt-2">
+                     <p><strong>Description:</strong> ${item.description || "Description not available"}</p>
+                     <p><strong>Comics:</strong> ${item.comics.available}</p>
+                     <p><strong>Series:</strong> ${item.series.available}</p>
+                     <p><strong>Stories:</strong> ${item.stories.available}</p>
+                     <p><strong>Events:</strong> ${item.events.available}</p>
+                 </div>
+             </div>`;
+
+             const image = col.querySelector('.figurina-image');
+             const details = col.querySelector('.figurina-details');
+
+             image.addEventListener('click', () => {
+                 details.classList.toggle('show');
+             });
+
+             albumContainer.appendChild(col);
         });
     }
 
-    function updatePagination(page, total) {
-        pageInfo.textContent = `Pagina ${page} di ${total}`;
-        prevBtn.disabled = page <= 1;
-        nextBtn.disabled = page >= total;
+    function updatePagination(page, totalPages) {
+        //currentPage = page;
+        pageInfo.textContent = `${page} / ${totalPages}`;
+        prevButton.disabled = page === 1;
+        nextButton.disabled = page === totalPages;
     }
 
-    prevBtn.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            fetchAlbum(currentPage, searchInput.value);
-        }
+    // evento di submit per la ricerca...
+    searchForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        query = searchInput.value.trim();
+        updateURL(1, query);
+        fetchAlbum(1, query);
     });
 
-    nextBtn.addEventListener('click', () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-            fetchAlbum(currentPage, searchInput.value);
-        }
+    // gestione della ricerca in tempo reale
+    // searchInput.addEventListener("input", (event) => {
+    //     const query = event.target.value.trim();
+    //     currentPage = 1;
+    //     updateURL(currentPage, query);
+    //     fetchAlbum(currentPage, query);
+    // });
+
+    prevButton.addEventListener('click', () => {
+        const prevPage = currentPage - 1;
+        updateURL(prevPage, query);
+        fetchAlbum(prevPage, query);
+        
+        // if (currentPage > 1) {
+        //     currentPage -= 1;
+        //     fetchAlbum(currentPage, query);
+        // }
     });
 
-    searchInput.addEventListener('input', () => {
-        currentPage = 1;
-        fetchAlbum(currentPage, searchInput.value);
+    nextButton.addEventListener('click', () => {
+        const nextPage = currentPage + 1;
+        updateURL(nextPage, query);
+        fetchAlbum(nextPage, query);
+
+        // if (currentPage < totalPages) {
+        //     currentPage += 1;
+        //     console.log('clicco next con query:', query);
+        //     fetchAlbum(currentPage, query);
+        // }
     });
 
-    fetchAlbum(currentPage);
+    // caricamento iniziale basato su query nell'URL
+    //const initialQuery = getQueryParam("name");
+    //searchInput.value = initialQuery;
+    fetchAlbum(currentPage, query);
 });

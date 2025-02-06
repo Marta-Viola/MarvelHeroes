@@ -1,71 +1,106 @@
-import User from "../models/User.js";
-import fetch from "node-fetch";
-import { getHash } from "../utils/hashUtils.js";
+import fetch from 'node-fetch';
+import { getHash } from '../utils/hashUtils.js';
+import User from '../models/User.js';
 
-// ottiene le figurine possedute dall'utente con paginazione e ricerca
-export async function getUserAlbum(req, res) {
+// funzione per ricavare i dettagli di una figurina da API
+async function getFigurineDetails(ids) {
+    // genera credenziali Marvel API
+    const ts = process.env.MARVEL_TS;
+    const publicKey = process.env.MARVEL_PUBLIC;
+    const privateKey = process.env.MARVEL_PRIVATE;
+    const hash = getHash(ts, publicKey, privateKey);
+    console.log('credenziali Marvel check');
+
+    const requests = ids.map(id =>
+        fetch(`${process.env.MARVEL_URL}/${id}?ts=${ts}&apikey=${publicKey}&hash=${hash}`)
+    );
+    const responses = await Promise.all(requests);
+    const results = await Promise.all(responses.map(res => res.json()));
+    return results.map(res => res.data?.results?.[0]).filter(Boolean);
+}
+
+// funzione per filtrare le figurine per il nome (se c'è searchQuery)
+function filterFigurineBySearchQuery(figurine, searchQuery) {
+    if (searchQuery) {
+        const r = figurine.filter(figurina => figurina.name.toLowerCase().includes(searchQuery));
+        //console.log(`figurine filtrate: ${r.length}`);
+        return r;
+    }
+    //console.log('figurine filtrateeee:', figurine.length);
+    return figurine;
+}
+
+// funzione per paginare le figurine
+async function displayUserFigurine(page, limit, searchQuery, filteredFigurineIds) {
+    const paginatedFigurine = filteredFigurineIds.slice((page - 1) * limit, page * limit);
+    const FigurineDetails = await getFigurineDetails(paginatedFigurine);
+    const filteredFigurine = filterFigurineBySearchQuery(FigurineDetails, searchQuery);
+    
+    return filteredFigurine;
+}
+
+// funzione per ottenere l'album dall'utente
+export const getUserAlbum = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const { page = 1, limit = 12, name} = req.query;
-        const offset = (page - 1) * limit;
+        const userId = req.user.id; // estrae ID utente, lo fornisce authMiddleware
+        console.log('userId check');
 
-        // recupera l'utente dal database
-        const user = await User.findById(userId);
+        const user = await User.findById(userId);   //recupera l'utente dal database
         if (!user) {
-            return res.status(404).json({ error: 'Utente non trovato' });
+            return res.status(404).json({ error: "Utente non trovato" });
         }
+        console.log('user check');
 
-        // ottiene l'array di ID delle figurine possedute
-        const ownedFigurineIds = user.figurinePossedute.idPersonaggio;
-        console.log('figurine possedute: ', ownedFigurineIds);
-        if (!ownedFigurineIds || ownedFigurineIds === 0) {
-            console.log('NON HAI FIGURINE');
-            return res.json({ data: { results: [], total: 0 }, page, totalPages: 0 });
-        } 
-
-        // configurazione API Marvel
-        const marvel_ts = process.env.MARVEL_TS || '1';
-        const marvel_private = process.env.MARVEL_PRIVATE;
-        const marvel_public = process.env.MARVEL_PUBLIC;
-        if (!marvel_private || !marvel_public) {
-            return res.status(500).json({ error: 'Chiavi API mancanti' });
+        const ownedFigurineIds = user.figurinePossedute.map(figurine => figurine.idPersonaggio);    // array di ID delle figurine possedute
+        if (ownedFigurineIds.length === 0) {
+            return res.json({ data: [], page: 1, totalPages: 1 });
         }
-        const marvel_hash = getHash(marvel_ts, marvel_public, marvel_private);
-        const marvel_url = process.env.MARVEL_URL || 'http://gateway.marvel.com/v1/public/characters';
+        console.log('ownedFigurineIds check', ownedFigurineIds.length);
 
-        // filtra solo gli ID richiesti nella pagina corrente
-        const figurineDaMostrare = ownedFigurineIds.slice(offset, offset + parseInt(limit));
+        // estrae i parametri dalla query string
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 12;
+        const searchQuery = req.query.name?.toLowerCase() || '';    //nome per la ricerca se presente
+        console.log('parametri query string check', page, limit, searchQuery);
 
-        // effettua richieste API per ottenere i dettagli delle figurine
-        const promises = figurineDaMostrare.map(id =>
-            fetch(`${marvel_url}/${id}?ts=${marvel_ts}&apikey=${marvel_public}&hash=${marvel_hash}`)
-            .then(response => response.json())
-        );
+        // filtra tutto ownedFigurineIds basandosi su searchQuery
+        const filteredFigurineIds = searchQuery
+            ? await Promise.all(ownedFigurineIds.map(async id => {
+                const figurine = await getFigurineDetails([id]);
+                return filterFigurineBySearchQuery(figurine, searchQuery).length > 0 ? id : null;
+            }))
+            .then(filteredIds => filteredIds.filter(Boolean))
+            : ownedFigurineIds;
 
-        // attende tutte le risposte
-        const responses = await Promise.all(promises);
-        const results = responses
-            .filter(res => res && res.data && Array.isArray(res.data.results) && res.data.results.length > 0)
-            .map(res => res.data.results[0]);   //qui dovremmo essere sicuri che results[0] esista...
-        console.log('results: ', results);
-
-        // applica filtro per nome se presente
-        const filteredResults = name
-            ? results.filter(f => f.name.toLowerCase().includes(name.toLowerCase()))
-            : results;
-        console.log('filteredResults: ', filteredResults);
+        // paginare l'array filteredFigurineIds
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const paginatedFigurineIds = filteredFigurineIds.slice(startIndex, endIndex);
+        
+        const FigurineDetails = await getFigurineDetails(paginatedFigurineIds);
+        const totalCount = Math.ceil(filteredFigurineIds.length / limit);
+        
+        console.log('quante figurine:', filteredFigurineIds.length);
+    
+        // da correggere!!!
+        // const totalCount = searchQuery
+        //     ? Math.ceil(filteredFigurine.length / limit)
+        //     : Math.ceil(ownedFigurineIds.length / limit);
+        // console.log('figurine filtrate:', totalCount); 
 
         res.json({
-            data: {
-                figurine: filteredResults,
-                total: ownedFigurineIds.length
-            },
-            page,
-            totalPages: Math.ceil(ownedFigurineIds.length / limit)
+            data: FigurineDetails,
+            page: page,
+            totalPages: totalCount,
+            searchQuery: searchQuery,
         });
 
     } catch (error) {
-        console.error('Errore durante il recupero dell\'album:', error);
-        res.status(500).json({ error: 'Errore durante il recupero dell\'album' });
+        console.error("Errore nel recupero dell\'album:", error);
+        res.status(500).json({ error: "Errore durante il recupero dell\'album" });
     }
-}
+};
+
+// ora mi cerca in tutte le figurine possedute ma quando scorro le pagine
+// si dimentica la ricerca..
+// inoltre non la fa più in real time sembra
