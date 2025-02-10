@@ -9,7 +9,6 @@ async function getFigurineDetails(ids) {
     const publicKey = process.env.MARVEL_PUBLIC;
     const privateKey = process.env.MARVEL_PRIVATE;
     const hash = getHash(ts, publicKey, privateKey);
-    console.log('credenziali Marvel check');
 
     const requests = ids.map(id =>
         fetch(`${process.env.MARVEL_URL}/${id}?ts=${ts}&apikey=${publicKey}&hash=${hash}`)
@@ -22,34 +21,29 @@ async function getFigurineDetails(ids) {
 // funzione per filtrare le figurine per il nome (se c'è searchQuery)
 function filterFigurineBySearchQuery(figurine, searchQuery) {
     if (searchQuery) {
-        const r = figurine.filter(figurina => figurina.name.toLowerCase().includes(searchQuery));
-        //console.log(`figurine filtrate: ${r.length}`);
-        return r;
+        return figurine.filter(figurina => figurina.name.toLowerCase().includes(searchQuery));;
     }
-    //console.log('figurine filtrateeee:', figurine.length);
     return figurine;
 }
 
 // funzione per paginare le figurine
-async function displayUserFigurine(page, limit, searchQuery, filteredFigurineIds) {
-    const paginatedFigurine = filteredFigurineIds.slice((page - 1) * limit, page * limit);
-    const FigurineDetails = await getFigurineDetails(paginatedFigurine);
-    const filteredFigurine = filterFigurineBySearchQuery(FigurineDetails, searchQuery);
+// async function displayUserFigurine(page, limit, searchQuery, filteredFigurineIds) {
+//     const paginatedFigurine = filteredFigurineIds.slice((page - 1) * limit, page * limit);
+//     const FigurineDetails = await getFigurineDetails(paginatedFigurine);
+//     const filteredFigurine = filterFigurineBySearchQuery(FigurineDetails, searchQuery);
     
-    return filteredFigurine;
-}
+//     return filteredFigurine;
+// }
 
 // funzione per ottenere l'album dall'utente
 export const getUserAlbum = async (req, res) => {
     try {
         const userId = req.user.id; // estrae ID utente, lo fornisce authMiddleware
-        console.log('userId check');
 
         const user = await User.findById(userId);   //recupera l'utente dal database
         if (!user) {
             return res.status(404).json({ error: "Utente non trovato" });
         }
-        console.log('user check');
 
         const ownedFigurineIds = user.figurinePossedute.map(figurine => figurine.idPersonaggio);    // array di ID delle figurine possedute
         if (ownedFigurineIds.length === 0) {
@@ -81,12 +75,6 @@ export const getUserAlbum = async (req, res) => {
         const totalCount = Math.ceil(filteredFigurineIds.length / limit);
         
         console.log('quante figurine:', filteredFigurineIds.length);
-    
-        // da correggere!!!
-        // const totalCount = searchQuery
-        //     ? Math.ceil(filteredFigurine.length / limit)
-        //     : Math.ceil(ownedFigurineIds.length / limit);
-        // console.log('figurine filtrate:', totalCount); 
 
         res.json({
             data: FigurineDetails,
@@ -100,7 +88,3 @@ export const getUserAlbum = async (req, res) => {
         res.status(500).json({ error: "Errore durante il recupero dell\'album" });
     }
 };
-
-// ora mi cerca in tutte le figurine possedute ma quando scorro le pagine
-// si dimentica la ricerca..
-// inoltre non la fa più in real time sembra

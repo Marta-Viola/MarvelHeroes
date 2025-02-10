@@ -1,7 +1,4 @@
 import User from '../models/User.js';
-// import jwt from 'jsonwebtoken';
-// import bcrypt from 'bcryptjs';
-// import authMiddleware from '../middlewares/auth.js';
 import { hashPassword, comparePassword, generateToken } from '../utils/authUtils.js';
 
 export const signup = async (req, res) => {

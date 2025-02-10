@@ -63,7 +63,6 @@ async function initializeFigurineGrid(token) {
             }
 
             const data = await response.json();
-            console.log('Dati ricevuti:', data);
 
             //aggiorna il totale delle pagine
             totalPages = data.totalPages;
@@ -71,7 +70,6 @@ async function initializeFigurineGrid(token) {
             // Mostra un messaggio se non ci sono risultati
             if (data.results.length === 0) {
                 renderNoResultsMessage();    // funzione per il messaggio
-                // totalPages = 0;
                 updatePagination(0, 0);
                 return;   
             }

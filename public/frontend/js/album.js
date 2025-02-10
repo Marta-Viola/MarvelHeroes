@@ -14,10 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let query = "";
 
     // funzione per ottenere i parametri dell'URL
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param) || "";
-    }
+    // function getQueryParam(param) {
+    //     const urlParams = new URLSearchParams(window.location.search);
+    //     return urlParams.get(param) || "";
+    // }
 
     // funzione per aggiornare l'URL senza ricaricare la pagina
     function updateURL(page, query) {
@@ -36,16 +36,12 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(`/api/album?page=${page}&limit=12&name=${encodeURIComponent(query)}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            console.log('check fetch', response.ok);
 
             if (!response.ok) {
                 throw new Error("Errore durante il recupero dell\'album");
             }
 
             const data = await response.json();
-            //const searchQuery = data.searchQuery;
-
-            console.log('check data', data);
 
             // se non ci sono risultati, mostra un messaggio
             if (data.data.length === 0) {
@@ -111,39 +107,17 @@ document.addEventListener("DOMContentLoaded", () => {
         fetchAlbum(1, query);
     });
 
-    // gestione della ricerca in tempo reale
-    // searchInput.addEventListener("input", (event) => {
-    //     const query = event.target.value.trim();
-    //     currentPage = 1;
-    //     updateURL(currentPage, query);
-    //     fetchAlbum(currentPage, query);
-    // });
-
     prevButton.addEventListener('click', () => {
         const prevPage = currentPage - 1;
         updateURL(prevPage, query);
         fetchAlbum(prevPage, query);
-        
-        // if (currentPage > 1) {
-        //     currentPage -= 1;
-        //     fetchAlbum(currentPage, query);
-        // }
     });
 
     nextButton.addEventListener('click', () => {
         const nextPage = currentPage + 1;
         updateURL(nextPage, query);
         fetchAlbum(nextPage, query);
-
-        // if (currentPage < totalPages) {
-        //     currentPage += 1;
-        //     console.log('clicco next con query:', query);
-        //     fetchAlbum(currentPage, query);
-        // }
     });
 
-    // caricamento iniziale basato su query nell'URL
-    //const initialQuery = getQueryParam("name");
-    //searchInput.value = initialQuery;
     fetchAlbum(currentPage, query);
 });

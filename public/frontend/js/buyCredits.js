@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             
             const userData = await response.json();
-            console.log('Dati utente:', userData);
             
            if (response.ok) {
             userCreditsDisplay.textContent = `Crediti attuali: ${userData.credits}`;

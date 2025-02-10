@@ -19,9 +19,7 @@ export const buyCredits = async (req, res) => {
         }
 
         // Aggiungi i crediti all'utente
-        console.log('crediti: ', user.credits);
         user.credits += amount;
-        console.log('dopo aggiunta: ', user.credits);
         await user.save();
 
         // Risponde con il numero aggiornato di crediti

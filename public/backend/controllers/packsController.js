@@ -48,28 +48,6 @@ export const getRandomMarvelCharacters = async () => {
 
         return characters;
 
-        // // Esegue la richiesta all'API Marvel
-        // //const response = await fetch(url);
-        // console.log("Status della risposta:", response.status); // debug Status
-
-        // if (!response.ok) {
-        //     throw new Error(`Errore API: ${response.statusText} - ${response.statusText}`);
-        // }
-
-        // const data = await response.json();
-        // //console.log("Risultato JSON ricevuto:", JSON.stringify(data, null, 2)); // debug JSON
-
-        // if (!data || !data.data || !data.data.results) {
-        //     throw new Error('Risposta API non valida');
-        // }
-
-        // // Estrae i personaggi ricevuti
-        // const characters = data.data.results.map(character => ({
-        //     idPersonaggio: character.id,
-        //     nome: character.name
-        // }));
-
-        // return characters;
     } catch (error) {
         console.error('Errore durante il recupero delle figurine:', error);
         throw new Error('Errore durante il recupero delle figurine');
