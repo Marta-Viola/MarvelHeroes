@@ -15,6 +15,7 @@ import creditsRoutes from './public/backend/routes/creditsRoutes.js';
 import packsRoutes from './public/backend/routes/packsRoutes.js';
 import albumRoutes from './public/backend/routes/albumRoutes.js';
 import marketRoutes from "./public/backend/routes/marketRoutes.js";
+import userRoutes from "./public/backend/routes/userRoutes.js";
 
 //configurazioni
 dotenv.config();
@@ -49,6 +50,7 @@ app.use('/api/user', profileRoutes);
 app.use('/api/packs', authMiddleware, packsRoutes);
 app.use('/api/album', albumRoutes);
 app.use('/api/market', authMiddleware, marketRoutes);
+app.use('/api/user', authMiddleware, userRoutes);
 
 //get
 app.get('/api/landing', (req, res) => {

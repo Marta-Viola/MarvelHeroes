@@ -9,8 +9,12 @@ document.addEventListener("DOMContentLoaded", () => {
 // funzione per recuperare le figurine in vendita dal backend e mostrarle nella tabella
 async function fetchMarketItems() {
     try {
-        const response = await fetch("/market");
-        if (response.ok) throw new Error("Errore nel caricamento del mercato");
+        const token = localStorage.getItem("jwtToken");
+
+        const response = await fetch("/api/market", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) throw new Error("Errore nel caricamento del mercato");
 
         const marketItems = await response.json();
         renderMarketTable(marketItems);
@@ -66,5 +70,9 @@ function renderMarketTable(marketItems) {
 // funzione per aprire il modale di proposta di baratto
 function openTradeModal(item) {
     console.log("non sarà proprio così ma poi vedremo");
-    
 }
+
+// quando la pagina si carica viene chiamata fetchMarketTable()
+// questa funzione fa una richiesta GET al backend (/market) per recuperare le figurine disponibili
+// renderMarketTable() aggiorna dinamicamente la tabella con i dati ricevuti
+// per ogni riga, viene creato un bottone "Proponi Baratto", che in futuro aprirà un modale...
