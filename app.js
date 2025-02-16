@@ -6,16 +6,15 @@ import connectDB from './public/backend/config/db.js';
 import authRoutes from './public/backend/routes/authRoutes.js';
 import dotenv from 'dotenv';
 import authMiddleware from './public/backend/middlewares/auth.js';
-import md5 from 'md5';
+// import md5 from 'md5';
 import profileRoutes from './public/backend/routes/profileRoutes.js';
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
 import crypto from 'crypto';
 import figurineRoutes from './public/backend/routes/figurineRoutes.js';
 import creditsRoutes from './public/backend/routes/creditsRoutes.js';
 import packsRoutes from './public/backend/routes/packsRoutes.js';
 import albumRoutes from './public/backend/routes/albumRoutes.js';
-import marketRoutes from "./public/backend/routes/marketRoutes.js";
-import userRoutes from "./public/backend/routes/userRoutes.js";
+import marketRoutes from './public/backend/routes/marketRoutes.js';
 
 //configurazioni
 dotenv.config();
@@ -45,12 +44,11 @@ app.use(express.json());
 
 //routes
 app.use('/api/auth', authRoutes);
-app.use('/api/user', creditsRoutes);
+app.use('/api/user', [creditsRoutes, profileRoutes]);
 app.use('/api/user', profileRoutes);
 app.use('/api/packs', authMiddleware, packsRoutes);
 app.use('/api/album', albumRoutes);
-app.use('/api/market', authMiddleware, marketRoutes);
-app.use('/api/user', authMiddleware, userRoutes);
+app.use('/api/market', marketRoutes);
 
 //get
 app.get('/api/landing', (req, res) => {

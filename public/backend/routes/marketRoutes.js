@@ -1,23 +1,16 @@
-import express from "express";
-import { getUserMarketFigurine,getMarket, addToMarket, removeFromMarket } from "../controllers/marketController.js";
-import authMiddleware from "../middlewares/auth.js";
+import express from 'express';
+import authMiddleware from '../middlewares/auth.js';
+import { getUserFigurine, getUserFigurineInVendita, addToMarket } from '../controllers/marketController.js';
 
 const router = express.Router();
 
-// rotta per ottenere tutte le figurine in vendita
-router.get("/", getMarket);
+// per mostrare le figurine possedute dall'utente
+router.get('/figurine', authMiddleware, getUserFigurine);
 
-// rotta per ottenere le figurine possedute dall'utente in vendita
-router.get("/user", authMiddleware, getUserMarketFigurine);
+// per mostrare le figurine in vendita dall'utente
+router.get('/figurineInVendita', authMiddleware, getUserFigurineInVendita);
 
-// rotta per aggiungere una figurina al mercato
-router.post("/add", authMiddleware, addToMarket);
-
-// rotta per rimuovere una figurina dal mercato
-router.post("/remove", authMiddleware, removeFromMarket);
+// per aggiungere le figurine al mercato
+router.post('/addToMarket', authMiddleware, addToMarket);
 
 export default router;
-
-// GET /market restituisce tutte le figurine in vendita
-// POST /market aggiunge una figurina al mercato
-// DELETE /market/:id rimuove una figurina dal mercato

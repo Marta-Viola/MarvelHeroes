@@ -1,3 +1,5 @@
+// per mostrare le figurine in homepage
+
 import fetch from 'node-fetch';
 import { getHash } from '../utils/hashUtils.js';
 

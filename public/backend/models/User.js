@@ -11,6 +11,12 @@ const UserSchema = new mongoose.Schema({
             idPersonaggio: { type: Number, required: true },
             nome: { type: String, required: true }
         }
+    ],
+    figurineInVendita: [
+        {
+            idPersonaggio: { type: Number, required: true },
+            nome: { type: String, required: true }
+        }
     ]
 });
 
