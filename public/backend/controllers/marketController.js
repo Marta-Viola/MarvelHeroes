@@ -15,6 +15,8 @@ import { getHash } from '../utils/hashUtils.js';
 import User from '../models/User.js';
 import Market from '../models/Market.js';
 
+
+
 // ***l'utente parte visualizzando le sue figurine***
 
 // funzione per ottenere i dettagli di una figurina da API
@@ -49,10 +51,10 @@ export const getUserFigurine = async (req, res) => {
         console.log('(baratto): quantità figurine possedute = ', ownedFigurineIds.length);
 
         //array di figurine copia di ownedFigurineIds
-        const figurineIds = [...ownedFigurineIds];
+        // const figurineIds = [...ownedFigurineIds];
 
         // restituiamo una risposta con le figurine da mostrare
-        const figurineDetails = await getFigurineDetails(figurineIds);
+        const figurineDetails = await getFigurineDetails(ownedFigurineIds);
         res.json({ data: figurineDetails});
 
     } catch (error) {
@@ -73,34 +75,50 @@ export const addToMarket = async (req, res) => {
 
         // ottiene le figurine checkate dal frontend
         const { figurineIds } = req.body;
-        if (!figurineIds || !Array.isArray(figurineIds) || figurineIds.length === 0) {
+        console.log('(baratto): figurineIds = ', figurineIds);
+        
+        const figurineIdsToInt = figurineIds.map(id => parseInt(id));
+        if (!figurineIdsToInt || !Array.isArray(figurineIdsToInt) || figurineIdsToInt.length === 0) {
             return res.status(400).json({ error: 'Nessuna figurina selezionata.' });
         }
-        console.log('(baratto): figurine checkate = ', figurineIds.length);
+        console.log('(baratto): figurine checkate = ', figurineIdsToInt);
 
         // aggiunge le figurine al mercato
         // per ogni figurina, crea un oggetto Market (con idUtente, idPersonaggio e data) e lo salva nel mercato
-        for (const figurineId of figurineIds) {
-            const marketItem = new Market({ idUtente: userId, idPersonaggio: figurineId, data: new Date() });
-            await marketItem.save();
-        }
+        // for (const figurineId of figurineIds) {
+        //     const marketItem = new Market({ idUtente: userId, idPersonaggio: figurineId, data: new Date() });
+        //     await marketItem.save();
+        // }
 
         // sposta le figurine da figurinePossedute a figurineInVendita
-        user.figurinePossedute = user.figurinePossedute.filter(figurine => !figurineIds.includes(figurine.idPersonaggio));
-        console.log('figurinePossedute dopo spostamento: ', user.figurinePossedute);
-        user.figurineInVendita = [...user.figurineInVendita, ...figurineIds];
-        console.log('figurineInVendita dopo spostamento: ', user.figurineInVendita);
-
+        // non lo fa correttamente
+        // user.figurinePossedute = user.figurinePossedute.filter(figurine => !figurineIds.includes(figurine.idPersonaggio));
+        // console.log('figurinePossedute dopo spostamento: ', user.figurinePossedute);
+        // user.figurineInVendita = [...user.figurineInVendita, ...figurineIds];
+        // console.log('figurineInVendita dopo spostamento: ', user.figurineInVendita);
+        const figurineToMove = user.figurinePossedute.filter(figurine => figurineIdsToInt.includes(parseInt(figurine.idPersonaggio)));
+        console.log('figurineToMove: ', figurineToMove);
+        
+        user.figurinePossedute = user.figurinePossedute.filter(figurine => !figurineIdsToInt.includes(parseInt(figurine.idPersonaggio)));
+        user.figurineInVendita = [...user.figurineInVendita, ...figurineToMove];
+        
         // salva le modifiche all'utente
         await user.save();
 
+        console.log('figurinePossedute dopo spostamento: ', user.figurinePossedute);
+        console.log('figurineInVendita dopo spostamento: ', user.figurineInVendita);
+
+
         // chiamate a funzioni per aggiornare le figurinePossedute e le figurineInVendita e il mercato
-        await getUserFigurine();
-        await getUserFigurineInVendita();
+        // NON è COSì CHE SI FA
+        // await getUserFigurine();
+        // await getUserFigurineInVendita();
         // await getMarket();
 
-        // restituisce una risposta (Market)
-        res.json({ data: user.figurineInVendita });
+        // restituisce una risposta
+        const updatedFigurinePossedute = user.figurinePossedute;
+        const updatedFigurineInVendita = user.figurineInVendita;
+        res.json({ updatedFigurinePossedute, updatedFigurineInVendita });
 
     } catch (error) {
         console.error('(baratto): Errore durante l\'aggiunta delle figurine al mercato:', error);
