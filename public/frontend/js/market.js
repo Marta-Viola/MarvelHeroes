@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const figurinePosseduteContainer = document.getElementById('figurine-possedute-list');
     const figurineInVenditaContainer = document.getElementById('figurine-sul-mercato-list');
     const addToMarketButton = document.getElementById('add-to-market-btn');
+    const removeFromMarketButton = document.getElementById('remove-from-market-btn');
 
     // funzione per ottenere le figurine possedute dall'utente
     async function fetchUserFigurine() {
@@ -131,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (!response.ok) throw new Error("Errore durante l'aggiunta delle figurine al mercato.");
 
-            const figurineInVendita = await response.json();
+            // const figurineInVendita = await response.json();
 
             // aggiorna il mercato
             // ...
@@ -144,6 +145,29 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("errore nell'aggiunta delle figurine al mercato:", error);
             alert("errore nell'aggiunta delle figurine al mercato");
+        }
+    }
+
+    // funzione per gestire la rimozione dal mercato
+    async function removeFromMarket(figurineIds) {
+        try {
+            const response = await fetch('/api/market/removeFromMarket', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ figurineIds }),
+            });
+            if (!response.ok) throw new Error("Errore durante la rimozione delle figurine dal mercato.");
+
+            // aggiorna il mercato
+            // ...
+
+            // aggiorna le figurine in vendita e le possedute
+            fetchUserFigurine();
+            fetchUserFigurineInVendita();
+
+        } catch (error) {
+            console.error("errore nella rimozione delle figurine dal mercato:", error);
+            alert("errore nella rimozione delle figurine dal mercato");
         }
     }
 
@@ -163,9 +187,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return figurineIds;
     }
 
+    function getSelectedInVenditaIds() {
+        const checkboxes = figurineInVenditaContainer.querySelectorAll('input[type="checkbox"]:checked');
+        
+        // crea un array di id figurine selezionate
+        const figurineIds = [];
+        checkboxes.forEach(checkbox => {
+            figurineIds.push(checkbox.parentNode.id);
+        });
+
+        return figurineIds;
+    }
+
     // gestione eventi
     addToMarketButton.addEventListener('click', () => {
         addToMarket(getSelectedPosseduteIds());
+    });
+
+    removeFromMarketButton.addEventListener('click', () => {
+        removeFromMarket(getSelectedInVenditaIds());
     });
 
     // chiamate finali per far andare le cose

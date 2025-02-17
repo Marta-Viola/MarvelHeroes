@@ -85,20 +85,15 @@ export const addToMarket = async (req, res) => {
 
         // aggiunge le figurine al mercato
         // per ogni figurina, crea un oggetto Market (con idUtente, idPersonaggio e data) e lo salva nel mercato
-        // for (const figurineId of figurineIds) {
-        //     const marketItem = new Market({ idUtente: userId, idPersonaggio: figurineId, data: new Date() });
-        //     await marketItem.save();
-        // }
+        for (const figurineId of figurineIds) {
+            const marketItem = new Market({ idUtente: userId, idPersonaggio: figurineId, data: new Date() });
+            await marketItem.save();
+        }
+        console.log('(baratto): figurine aggiunte al mercato');
 
         // sposta le figurine da figurinePossedute a figurineInVendita
-        // non lo fa correttamente
-        // user.figurinePossedute = user.figurinePossedute.filter(figurine => !figurineIds.includes(figurine.idPersonaggio));
-        // console.log('figurinePossedute dopo spostamento: ', user.figurinePossedute);
-        // user.figurineInVendita = [...user.figurineInVendita, ...figurineIds];
-        // console.log('figurineInVendita dopo spostamento: ', user.figurineInVendita);
         const figurineToMove = user.figurinePossedute.filter(figurine => figurineIdsToInt.includes(parseInt(figurine.idPersonaggio)));
         console.log('figurineToMove: ', figurineToMove);
-        
         user.figurinePossedute = user.figurinePossedute.filter(figurine => !figurineIdsToInt.includes(parseInt(figurine.idPersonaggio)));
         user.figurineInVendita = [...user.figurineInVendita, ...figurineToMove];
         
@@ -108,12 +103,7 @@ export const addToMarket = async (req, res) => {
         console.log('figurinePossedute dopo spostamento: ', user.figurinePossedute);
         console.log('figurineInVendita dopo spostamento: ', user.figurineInVendita);
 
-
-        // chiamate a funzioni per aggiornare le figurinePossedute e le figurineInVendita e il mercato
-        // NON è COSì CHE SI FA
-        // await getUserFigurine();
-        // await getUserFigurineInVendita();
-        // await getMarket();
+        // qui dovrebbe aggiungere effettivamente le figurine al mercato (?)
 
         // restituisce una risposta
         const updatedFigurinePossedute = user.figurinePossedute;
@@ -151,3 +141,50 @@ export const getUserFigurineInVendita = async (req, res) => {
 }
 
 // funzione per rimuovere una figurina dal mercato
+export const removeFromMarket = async (req, res) => {
+    try {
+        // ottiene l'user
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'Utente non trovato.' });
+
+        // ottiene le figurine checkate dal frontend
+        const { figurineIds } = req.body;
+        console.log('(baratto): figurineIds = ', figurineIds);
+            
+        const figurineIdsToInt = figurineIds.map(id => parseInt(id));
+        if (!figurineIdsToInt || !Array.isArray(figurineIdsToInt) || figurineIdsToInt.length === 0) {
+            return res.status(400).json({ error: 'Nessuna figurina selezionata.' });
+        }
+        console.log('(baratto): figurine checkate = ', figurineIdsToInt);
+
+        // rimuove le figurine dal mercato
+        for (const figurinaId of figurineIds) {
+            await Market.findOneAndDelete({ idUtente: userId, idPersonaggio: figurinaId });
+        }
+        console.log('(baratto): figurine rimosse dal mercato');
+
+        // sposta le figurine da figurineInVendita a figurinePossedute
+        const figurineToMove = user.figurineInVendita.filter(figurine => figurineIdsToInt.includes(parseInt(figurine.idPersonaggio)));
+        console.log('FigurineToMove: ', figurineToMove);
+        user.figurineInVendita = user.figurineInVendita.filter(figurine => !figurineIdsToInt.includes(parseInt(figurine.idPersonaggio)));
+        user.figurinePossedute = [...user.figurinePossedute, ...figurineToMove];
+
+        // salva le modifiche
+        await user.save();
+
+        // risponde
+        const updatedFigurinePossedute = user.figurinePossedute;
+        const updatedFigurineInVendita = user.figurineInVendita;
+        res.json({ updatedFigurinePossedute, updatedFigurineInVendita });
+
+    } catch (error) {
+        console.error('(baratto): Errore durante la rimozione delle figurine dal mercato:', error);
+        res.status(500).json({ error: '(baratto): Errore durante la rimozione delle figurine dal mercato' });
+    }
+}
+
+// funzione per ottenere le figurine sul mercato globale
+// export const getMarketFigurine = async (req, res) => {
+
+// }

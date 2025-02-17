@@ -29,7 +29,9 @@ export const signup = async (req, res) => {
             password: hashedPassword, 
             email, 
             hero,
-            credits: 0
+            credits: 0,
+            figurinePossedute: [],
+            figurineInVendita: []
         });
         //salva l'utente nel database
         await newUser.save();
