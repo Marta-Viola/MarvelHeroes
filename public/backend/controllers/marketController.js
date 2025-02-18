@@ -26,7 +26,6 @@ async function getFigurineDetails(ids) {
     const public_key = process.env.MARVEL_PUBLIC;
     const private_key = process.env.MARVEL_PRIVATE;
     const hash = getHash(ts, public_key, private_key);
-
     const requests = ids.map(id =>
         fetch(`${url}/${id}?ts=${ts}&apikey=${public_key}&hash=${hash}`)
     );
@@ -184,7 +183,75 @@ export const removeFromMarket = async (req, res) => {
     }
 }
 
-// funzione per ottenere le figurine sul mercato globale
-// export const getMarketFigurine = async (req, res) => {
+// *** l'utente guarda il mercato ***
 
+// funzione per ottenere le figurine sul mercato globale
+export const getMarket = async (req, res) => {
+    try {
+        // ottiene l'user
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'Utente non trovato.' });
+
+        // mette in un array ogni elemento di Market
+        const marketElements = await Market.find().sort({ data: -1 });
+
+        // ricava un array (figurineIds) di id personaggi da mandare a getFigurineDetails (figurine)
+        const figurineIds = marketElements.map(element => element.idPersonaggio);
+        const figurine = await getFigurineDetails(figurineIds); // contiene tutte le info delle figurine sul mercato
+
+        // dovrà rispondere con un array di: nomeUtente, imgFigurina, nomePersonaggio
+        // forEach marketElements: findUser, figurine.img, figurine.nome (?)
+        const marketElementsWithDetails = marketElements.map(async (element) => {
+            // ricava l'user dell'elemento corrente
+            const userMarket = await User.findById(element.idUtente);
+            // ricava l'username
+            const username = userMarket.username;
+
+            // ricava le informazioni della figurina dall'array figurine
+            const figurinaDetails = figurine.find(fig => fig.id === element.idPersonaggio);
+            const imageUrl = figurinaDetails.thumbnail.path + '.' + figurinaDetails.thumbnail.extension;
+            const figurinaName = figurinaDetails.name;
+            const idFigurina = element.idPersonaggio;
+
+            // voglio passare anche l'id dell'elemento sul mercato
+            const marketId = element._id;
+
+            return { username, imageUrl, figurinaName, idFigurina, marketId };
+        });
+
+        const marketResponse = await Promise.all(marketElementsWithDetails);
+        res.json(marketResponse);
+
+    } catch (error) {
+        console.error('(baratto): Errore durante la raccolta dei dati del mercato:', error);
+        res.status(500).json({ error: 'Errore durante la raccolta dei dati del mercato'});
+    }
+}
+
+// *** l'utente vuole proporre un trade ***
+// vede una figurina sul mercato che vuole ottenere => controllo che quell'elemento non l'abbia messo lui a mercato
+// seleziona una sua figurina con cui scambiarla => controllo che non l'abbia già promessa a qualcun'altro (tipo bloccata)
+// crea il trade, con stato pendente e tutti i dati
+// // ottiene i parametri del trade tramite req
+// export const createTrade = async (req, res) => {
+//     try {
+//         // user0, cotnrolla che esista
+//         const idUser0 = req.idUser0;
+//         const user0 = await User.findById(idUser0);
+//         if (!user0) return res.status(404).json({ error: 'User0 non trovato. '});
+
+//         // fig0, controlla che user0 ce l'abbia
+//         const idFig0 = req.idFig0;
+//         // ...
+
+//         // user1
+//         const idUser1 = req.idUser1;
+//         const user1 = await User.findById(idUser1);
+//         if (!user1) return res.status(404).json({ error: 'User1 non trovato. '});
+
+        
+
+//     }
 // }
+

@@ -1,6 +1,11 @@
 import express from 'express';
 import authMiddleware from '../middlewares/auth.js';
-import { getUserFigurine, getUserFigurineInVendita, addToMarket, removeFromMarket } from '../controllers/marketController.js';
+import { 
+    getUserFigurine, 
+    getUserFigurineInVendita, 
+    addToMarket, 
+    removeFromMarket, 
+    getMarket } from '../controllers/marketController.js';
 
 const router = express.Router();
 
@@ -15,5 +20,8 @@ router.post('/addToMarket', authMiddleware, addToMarket);
 
 // per rimuovere le figurine dal mercato
 router.post('/removeFromMarket', authMiddleware, removeFromMarket);
+
+// per mostrare le figurine sul mercato
+router.get('/getMarket', authMiddleware, getMarket);
 
 export default router;
