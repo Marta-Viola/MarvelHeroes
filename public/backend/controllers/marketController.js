@@ -14,6 +14,7 @@ import fetch from 'node-fetch';
 import { getHash } from '../utils/hashUtils.js';
 import User from '../models/User.js';
 import Market from '../models/Market.js';
+import Trade from '../models/Trade.js';
 
 
 
@@ -233,25 +234,155 @@ export const getMarket = async (req, res) => {
 // vede una figurina sul mercato che vuole ottenere => controllo che quell'elemento non l'abbia messo lui a mercato
 // seleziona una sua figurina con cui scambiarla => controllo che non l'abbia già promessa a qualcun'altro (tipo bloccata)
 // crea il trade, con stato pendente e tutti i dati
-// // ottiene i parametri del trade tramite req
+// ottiene i parametri del trade tramite req
+// attenzione!! vanno passati pure gli id degli oggetti market... passiamo solo i market??
 // export const createTrade = async (req, res) => {
 //     try {
-//         // user0, cotnrolla che esista
-//         const idUser0 = req.idUser0;
-//         const user0 = await User.findById(idUser0);
-//         if (!user0) return res.status(404).json({ error: 'User0 non trovato. '});
+//         // market0, controlla che esista
+//         const idMarket0 = req.body.idMarket0;
+//         const market0 = getMarketElement(idMarket0);
+//         if (!market0) return res.status(404).json({ error: 'Market0 non trovato.' });
 
-//         // fig0, controlla che user0 ce l'abbia
-//         const idFig0 = req.idFig0;
-//         // ...
+//         // market1, controlla che esista
+//         const idMarket1 = req.body.idMarket1;
+//         const market1 = getMarketElement(idMarket1);
+//         if (!market1) return res.status(404).json({ error: 'Market1 non trovato.' });
 
-//         // user1
-//         const idUser1 = req.idUser1;
-//         const user1 = await User.findById(idUser1);
-//         if (!user1) return res.status(404).json({ error: 'User1 non trovato. '});
-
+//         // controlliamo che la figurina non sia fig0 in altri trade!!
+//         // o meglio, che non sia market0!!
+//         if (!isTradable(market0)) {
+//             return res.json({ error: 'hai già promesso questa figurina a qualcuno.' });
+//         }
         
+//         // crea l'elemento trade
+//         const trade = new Trade({
+//             market0: idMarket0,
+//             market1: idMarket1,
+//             idUser0: market0.user,
+//             idUser1: market1.user,
+//             idFig0: market0.personaggio,
+//             idFig1: market1.personaggio,
+//             dataModifica: new Date(),
+//             status: 'pendente'
+//         });
+//         trade.save((err, trade) => {
+//             if (err) console.error(err);
+//             else console.log('Trade creato:', trade);
+//         });
 
+//         res.json({ trade: trade });
+//     } catch (error) {
+//         console.error('creazione trade non andata a buon fine.');
+//         res.status(500).json({ error: 'creazione trade non andata a buon fine.'});
 //     }
 // }
 
+// funzione per ottenere i dati da un oggetto mercato!
+export const getMarket1Element = async (req, res) => {
+    try {
+        // ottiene l'user
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'Utente non trovato' });
+        console.log('userId: ', userId);
+
+        // ricava l'elemento market da req
+        const marketId = req.body.market1Id;
+        console.log('market1Id = ', marketId);
+        const marketElement = await Market.findById(marketId);
+        if (!marketElement) return res.status(404).json({ error: 'Elemento markeet non trovato.' });
+        // console.log('marketId = ', marketId, 'marketElement = ', marketElement);
+
+        // ricava le informazioni da mandare al frontend
+        const userMarket = await User.findById(marketElement.idUtente);
+        if (!userMarket) return res.status(404).json({ error: 'Utente dell\'elemento market non trovato.' });
+        console.log('idUtente del market: ', marketElement.idUtente);
+        const username = userMarket.username;
+
+        // qua bisogna fare un controllo! non puoi tradare con te stesso!
+        if (userId === marketElement.idUtente.toString()) {
+            // alert('non puoi barattare con te stesso!');
+            return res.status(400).json({ error: 'Non puoi tradare con te stesso!' });
+        }
+
+        // ricava la figurina da marketElement
+        const figurinaId = [];
+        figurinaId.push(marketElement.idPersonaggio);
+        const figurina = await getFigurineDetails(figurinaId);
+        const figurinaDetails = figurina[0];
+        const imageUrl = figurinaDetails.thumbnail.path + '.' + figurinaDetails.thumbnail.extension;
+        const figurinaName = figurinaDetails.name;
+        const idFigurina = marketElement.idPersonaggio;
+
+        const response = { username, imageUrl, figurinaName, idFigurina, marketId };
+        res.json(response);
+    } catch (error) {
+        console.error('errore durante il recupero dell\'elemento market1 per il trade:', error);
+        res.status(500).json({ error: 'Errore durante il recupero dell\'elemento market1 per il trade' });
+    }
+}
+
+// Market0 va trovato, il frontend ci restituisce l'id user e l'id figurina, noi troviamo l'elemento market corrispondente
+export const getMarket0Element = async (req, res) => {
+    try {
+        // ottiene l'user
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'Utente non trovato' });
+        const userObjectId = new isObjectIdOrHexString(userId);
+        console.log('userId = ', userId);
+
+        // ottiene l'id figurina
+        const figId = req.body.idFigurina;
+        console.log('figId = ', figId);
+
+        // cerca l'elemento market
+        const marketElement = await Market.findOne({
+            idUtente: userObjectId,
+            idPersonaggio: figId
+        });
+        if (!marketElement) {
+            return res.status(404).json({ error: 'non trovo l\'elemento market corrispondente' });
+        }
+
+        // prepara la risposta
+        const username = user.username;
+        const figurinaId = [];
+        figurinaId.push(marketElement.idPersonaggio);
+        const figurina = await getFigurineDetails(figurinaId);
+        const figurinaDetails = figurina[0];
+        const imageUrl = figurinaDetails.thumbnail.path + '.' + figurinaDetails.thumbnail.extension;
+        const figurinaName = figurinaDetails.name;
+        const idFigurina = marketElement.idPersonaggio; 
+        const marketId = marketElement._id;
+
+        // noi vogliamo {username, imageUrl, figurinaName, idFigurina, marketId}
+        const response = {username, imageUrl, figurinaName, idFigurina, marketId};
+        res.json(response);
+    } catch (error) {
+        console.error('errore durante il recupero dell\'elemento market0 per il trade:', error);
+        res.status(500).json({ error: 'Errore durante il recupero dell\'elemento market0 per il trade' });
+    }
+}
+
+// TODO:    aggiungi rotta
+//          gestisci frontend = richiesta, render, gestione eventi!! (mi raccomando il marketId!!)
+
+// funzione per controllare se una figurina è tradabile
+// controlla se non è presente in nessun'altro trade come market0
+// async function isTradable(market) {
+//     Trade.find({ market0: market, status: { $ne: 'rifiutato' } })
+//         .then((trades) => {
+//             if (trades.length > 0) {
+//                 console.log('Questa figurina è già stata promessa in un altro trade.');
+//                 return false;
+//             }
+//             else return true;
+//         })
+//         .catch((err) => {
+//             console.err(err);
+//             return false;
+//         })
+// }
+
+//

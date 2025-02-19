@@ -10,9 +10,14 @@
 //          - accettato
 //          - rifiutato
 
+// più che l'id della figurina, sarebbe meglio usare l'_id dell'oggetto market...
+
 import mongoose from 'mongoose';
+import Market from './Market.js';
 
 const TradeSchema = new mongoose.Schema({
+    market0: { type: mongoose.Schema.Types.ObjectId, ref: 'Market', required: true },
+    market1: { type: mongoose.Schema.Types.ObjectId, ref: 'Market', required: true },
     idUser0: { type: String, required: true },
     idFig0: { type: Number, required: true },
     idFig1: { type: Number, required: true },

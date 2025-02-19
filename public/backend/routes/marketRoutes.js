@@ -5,7 +5,9 @@ import {
     getUserFigurineInVendita, 
     addToMarket, 
     removeFromMarket, 
-    getMarket } from '../controllers/marketController.js';
+    getMarket,
+    getMarket1Element,
+    } from '../controllers/marketController.js';
 
 const router = express.Router();
 
@@ -23,5 +25,11 @@ router.post('/removeFromMarket', authMiddleware, removeFromMarket);
 
 // per mostrare le figurine sul mercato
 router.get('/getMarket', authMiddleware, getMarket);
+
+// *** sezione trade ***
+// per creare una proposta di trade
+router.post('/trade/getMarket1Element', authMiddleware, getMarket1Element);
+
+// router.post('/trade/create', authMiddleware, createTrade);
 
 export default router;
