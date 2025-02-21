@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const proposeFig0Button = document.getElementById('propose-trade-btn'); 
 
     // elementi della sezione 3
+    const tradeEntrataContainer = document.getElementById('proposte-scambio-list')
     const tradeUscitaContainer = document.getElementById('storico-proposte-list');
     const destinatarioBarattoSpan = document.getElementById('username-destinatario');
     const figurina0Cointainer = document.getElementById('baratto-uscita-tu-dai');
@@ -439,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //     username1: username1,
     //     status: trade.status
     function renderTradeInUscita(trades) {
-        tradeUscitaContainer.innerHTML = '';
+        tradeUscitaContainer.innerHTML = 'non ci sono trade in uscita.';
         
         console.log('trades: ', trades);
 
@@ -504,6 +505,140 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    //funzione per fetchare i trade in entrata
+    async function fetchTradeInEntrata() {
+        try {
+            const response = await fetch('/api/market/trade/getTradeEntrata', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) throw new Error("Errore durante il fetching di trade in entrata.");
+
+            const data = await response.json();
+            if (data.length === 0) {
+                console.log('non arrivano i dati del trade in entrata');
+            } else {
+                renderTradeInEntrata(data.tradeDetails);
+            }
+
+        } catch (error) {
+            console.error('Errore durante il fetching di trade in entrata:', error);
+            alert('errore durante il fetching di trade in entrata');
+        }
+    }
+
+    // funzione per renderizzare i trade in entrata
+    // utente / ti da / in cambio di / azioni
+    // dati ritornati da fetchTradeInEntrata:
+    //     username0: username0,
+    //     fig0img: fig0img,
+    //     fig0name: fig0name,
+    //     fig1img: fig1img,
+    //     fig1name: fig1name,
+    //     username1: username1,
+    //     status: trade.status
+    function renderTradeInEntrata(trades) {
+        tradeEntrataContainer.innerHTML = '';
+        
+        console.log('trades: ', trades);
+
+        trades.forEach(trade => {
+            const tr = document.createElement('tr');
+            // tr.classList.add('bg-light');
+            if (trade.status === 'pendente') {
+                // colore arancione
+                tr.classList.add('bg-warning', 'bg-opacity-75');
+            } else if (trade.status === 'accettato') {
+                // colore verde
+                tr.classList.add('bg-success', 'bg-opacity-75');
+            } else if (trade.status === 'rifiutato') {
+                // colore rosso
+                tr.classList.add('bg-danger', 'bg-opacity-75');
+            }
+
+            // utente
+            const user0 = document.createElement('td');
+            user0.textContent = trade.username0; 
+            user0.classList.add('fw-bold');
+            tr.appendChild(user0);
+
+            // ti da
+            const fig0 = document.createElement('td');
+            // fig0.classList.add('float-left');
+            const divFig0 = document.createElement('div');
+            divFig0.classList.add('d-flex', 'align-items-center');
+            
+            const img0 = document.createElement('img');
+            img0.src = trade.fig0img;
+            img0.alt = trade.fig0name;
+            img0.classList.add('rounded', 'me-2');
+            img0.height = 40;
+            img0.width = 40;
+            divFig0.appendChild(img0);
+            
+            const fig0name = document.createElement('span');
+            fig0name.textContent = trade.fig0name;
+            fig0name.classList.add('fw-bold', 'text-truncate');
+            fig0name.style.maxWidth = '150px';
+            divFig0.appendChild(fig0name);
+            fig0.appendChild(divFig0);
+            tr.appendChild(fig0);
+
+            // in cambio di
+            const fig1 = document.createElement('td');
+            // fig1.classList.add('float-left');
+            const divFig1 = document.createElement('div');
+            divFig1.classList.add('d-flex', 'align-items-center');
+
+            const img1 = document.createElement('img');
+            img1.src = trade.fig1img;
+            img1.alt = trade.fig1name;
+            img1.classList.add('rounded', 'me-2');
+            img1.height = 40;
+            img1.width = 40;
+            divFig1.appendChild(img1);
+
+            const fig1name = document.createElement('span');
+            fig1name.textContent = trade.fig1name;
+            fig1name.classList.add('fw-bold', 'text-truncate');
+            fig1name.style.maxWidth = '150px';
+            divFig1.appendChild(fig1name);
+            fig1.appendChild(divFig1);
+            tr.appendChild(fig1);
+
+            // azioni!
+            // toggle per accettare o rifiutare il trade
+            const actions = document.createElement('td');
+            const divActions = document.createElement('div');
+            divActions.classList.add('d-flex', 'flex-wrap', 'justify-content-between');
+            // actions.classList.add('d-flex', 'justify-content-between');
+            
+            const acceptButton = document.createElement('button');
+            acceptButton.type = 'submit';
+            acceptButton.classList.add('btn', 'btn-sm', 'btn-success', 'w-100');
+            acceptButton.textContent = 'Accetta';
+            // acceptButton.addEventListener('click', () => {
+            //     acceptTrade(trade.id);
+            // });
+
+            const rejectButton = document.createElement('button');
+            rejectButton.type = 'submit';
+            rejectButton.classList.add('btn', 'btn-sm', 'btn-danger', 'w-100');
+            rejectButton.textContent = 'Rifiuta';
+            // rejectButton.addEventListener('click', () => {
+            //     rejectTrade(trade.id);
+            // });
+
+            divActions.appendChild(acceptButton);
+            divActions.appendChild(rejectButton);
+
+            actions.appendChild(divActions);
+            tr.appendChild(actions);
+            
+            tradeEntrataContainer.appendChild(tr);
+        })
+    }
+
     // gestione eventi
     addToMarketButton.addEventListener('click', () => {
         addToMarket(getSelectedPosseduteIds());
@@ -540,6 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchUserFigurine();
     fetchUserFigurineInVendita();
     fetchMarket();
+    fetchTradeInEntrata();
     fetchTradeInUscita();
 });
 

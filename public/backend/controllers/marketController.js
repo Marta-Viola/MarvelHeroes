@@ -494,6 +494,24 @@ export const getTradeUscita = async (req, res) => {
     }
 }
 
+export const getTradeEntrata = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ error: 'Utente non trovato.' });
+
+        const trades = await Trade.find({ idUser1: userId });
+        console.log('(getTradeEntrata) trades: ', trades);
+        const tradeDetails = await getTradeDetails(trades);
+        console.log('(getTradeEntrata) tradeDetails: ', tradeDetails);
+        res.json({ tradeDetails });
+
+    } catch (error) {
+        console.error('errore durante la ricerca dei trade in entrata:', error);
+        res.status(500).json({ error: 'Errore durante la ricerca dei trade in entrata' });
+    }
+}
+
 // funzione per valutare se un trade sia fattibile
 //  => valida se non c'è altro trade con idUser === idUser0 && idFig === idFig0 && status === 'pendente'
 // oppure la eliminiamo e facciamo questo controllo in createTrade

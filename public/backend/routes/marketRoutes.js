@@ -10,7 +10,8 @@ import {
     getMarket1Element,
     getMarket0Element,
     createTrade,
-    getTradeUscita
+    getTradeUscita,
+    getTradeEntrata
     } from '../controllers/marketController.js';
 
 const router = express.Router();
@@ -42,5 +43,6 @@ router.post('/trade/create', authMiddleware, createTrade);
 
 // per mostrare le proposte di trade
 router.get('/trade/getTradeUscita', authMiddleware, getTradeUscita);
+router.get('/trade/getTradeEntrata', authMiddleware, getTradeEntrata);
 
 export default router;
