@@ -14,14 +14,15 @@
 
 import mongoose from 'mongoose';
 import Market from './Market.js';
+import User from './User.js';
 
 const TradeSchema = new mongoose.Schema({
     market0: { type: mongoose.Schema.Types.ObjectId, ref: 'Market', required: true },
     market1: { type: mongoose.Schema.Types.ObjectId, ref: 'Market', required: true },
-    idUser0: { type: String, required: true },
+    idUser0: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     idFig0: { type: Number, required: true },
     idFig1: { type: Number, required: true },
-    idUser1: { type: String, required: true },
+    idUser1: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     dataModifica: {type: Date, default: Date.now },
     status: { 
         type: String, 

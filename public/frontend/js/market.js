@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // token per le varie autorizzazioni
     const token = localStorage.getItem('jwtToken');
 
+    // span username
+    const usernameSpan = document.getElementById('username-span');
+
     // elementi della sezione 1
     const marketTableBody = document.getElementById('marketplace-table');
     // var market1Button = document.getElementById('market1-btn');
@@ -13,9 +16,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const figurineInVenditaContainer = document.getElementById('figurine-sul-mercato-list');
     const addToMarketButton = document.getElementById('add-to-market-btn');
     const removeFromMarketButton = document.getElementById('remove-from-market-btn');
+    const proposeFig0Button = document.getElementById('propose-trade-btn'); 
 
     // elementi della sezione 3
+    const tradeUscitaContainer = document.getElementById('storico-proposte-list');
+    const destinatarioBarattoSpan = document.getElementById('username-destinatario');
+    const figurina0Cointainer = document.getElementById('baratto-uscita-tu-dai');
     const figurina1Container = document.getElementById('baratto-uscita-in-cambio-di');
+    const proposeTradeButton = document.getElementById('proponi-baratto-btn');
+
+    // funzione per ottenere l'username dell'utente
+    async function fetchUsername() {
+        try {
+            const response = await fetch('/api/market/username', {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) throw new Error('Errore durante il recupero dell\'username.');
+
+            const data = await response.json();
+            if (!data) usernameSpan.innerText = 'Non so chi tu sia';
+            else usernameSpan.innerText = data.username;
+        } catch (error) {
+            console.error("errore nel recupero del tuo username:", error);
+            alert("errore nel recupero del tuo username");
+        }
+    }
 
     // funzione per ottenere le figurine possedute dall'utente
     async function fetchUserFigurine() {
@@ -81,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error("Errore durante il recupero delle figurine in vendita.");
 
             const data = await response.json();
-            console.log("figurine in vendita: ", data.data.length);
+            console.log("figurine in vendita: ", data.data);
             if (data.data.length === 0) {
                 figurinePosseduteContainer.innerHTML = "<li>Nessuna figurina trovata.</li>";
             } else {
@@ -105,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.classList.add('form-check-input', 'me-2');
-            checkbox.id = fig.
+            checkbox.id = fig.id;
             li.appendChild(checkbox);
 
             const img = document.createElement('img');
@@ -122,7 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // console.log("nome del personaggio: ", name);
             li.appendChild(name);
 
-            figurineInVenditaContainer.appendChild(li);
+            if (figurineInVenditaContainer) figurineInVenditaContainer.appendChild(li);
+            else console.error('figurineInVenditaContainer è undefined..');
+            
         });
     }
 
@@ -240,26 +267,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // funzione per creare un trade
-    // async function createTrade(market0, market1) {
-    //     try {
-    //         // invia al backend la richiesta di creare un trade
-    //         const response = await fetch('/api/market/trade/create', {
-    //             method: 'POST',
-    //             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    //             body: JSON.stringify({ market0, market1 }),
-    //         });
-    //         if (!response.ok) throw new Error("Errore durante la creazione del trade");
-
-    //         // qui dovrebbe aggiungere il trade alla tabella 'proposte in uscita'
-
-    //     } catch (error) {
-    //         console.error('errore durante la creazione del trade', error);
-    //         alert('errore durante la creazione del trade.');
-    //     }
-    // }
-
     // funzione per ottenere market0
+    // deve mandare l'id della figurina!!
+    async function fetchMarket0(fig0Id) {
+        try {
+            console.log('fig0Id = ', fig0Id);
+            const response = await fetch('/api/market/trade/getMarket0Element', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ fig0Id }),
+            });
+            if (!response.ok) throw new Error("Errore durante il fetching per market0");
+
+            // data = {username, imageUrl, figurinaName, idFigurina, marketId}
+            const data = await response.json();
+            if (data.length === 0) console.log('non arrivano i dati a market0');
+            else renderMarket0(data);
+
+        } catch (error) {
+            console.error('Errore durante il recupero di market0:', error);
+            alert('errore durante la fetch di market0'); 
+        }
+    }
+
+    function renderMarket0(item) {
+        figurina0Cointainer.innerHTML = '';
+
+        figurina0Cointainer.innerHTML = 
+            `<div class="figurina border p-3 mb-3 shadow-sm position-relative text-center w-100" id="${item.marketId}">
+                <img src="${item.imageUrl}" alt="${item.figurinaName}" class="img-fluid figurina-image">
+                <h5 class="figurina-name text-light">${item.figurinaName}</h5>
+            </div> `;
+    }
 
     // funzione per ottenere market1
     async function fetchMarket1(market1Id) {
@@ -275,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             if (data.length === 0) {
-                console.log('non arrivano i dati');
+                console.log('non arrivano i dati a market1');
             } else {
                 renderMarket1(data);
             }
@@ -290,12 +329,16 @@ document.addEventListener('DOMContentLoaded', () => {
         figurina1Container.innerHTML = '';
 
         figurina1Container.innerHTML = 
-            `<img src="${item.imageUrl}" alt="${item.figurinaName}" class="img-fluid figurina-image">
-             <h5 class="figurina-name text-light">${item.figurinaName}</h5> `;
-        
-        // trova un modo per salvare l'id del market element
+            `<div class="figurina border p-3 mb-3 shadow-sm position-relative text-center w-100" id="${item.marketId}">
+                <img src="${item.imageUrl}" alt="${item.figurinaName}" class="img-fluid figurina-image">
+                <h5 class="figurina-name text-light">${item.figurinaName}</h5>
+            </div> `;
+
+        destinatarioBarattoSpan.innerHTML = '';
+        destinatarioBarattoSpan.innerText = item.username;
     }
 
+    
     // funzione per creare figurineIds da un array di checkbox spuntate
     function getSelectedPosseduteIds() {
         const checkboxes = figurinePosseduteContainer.querySelectorAll('input[type="checkbox"]:checked');
@@ -324,6 +367,142 @@ document.addEventListener('DOMContentLoaded', () => {
         return figurineIds;
     }
 
+    // funzione per prendere i marketId delle figurine nella proposta di trade
+    // è l'id del figlio di figurina0Container e di figurina1Container
+    function getMarketId() {
+        const market0Id = figurina0Cointainer.children[0].id;
+        const market1Id = figurina1Container.children[0].id;
+        return [market0Id, market1Id];
+    }
+
+    // funzione per mandare gli id market e far creare il trade al backend
+    async function sendTrade(market0Id, market1Id) {
+        try {
+            console.log('market0Id = ', JSON.stringify(market0Id), 'market1Id = ', JSON.stringify(market1Id));
+            const response = await fetch('/api/market/trade/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ market0Id, market1Id }),
+            });
+            if (!response.ok) throw new Error("Errore durante la creazione del trade.");
+
+            const data = await response.json();
+            if (data.length === 0) {
+                console.log('non arrivano i dati del trade');
+            } else {
+                // fetchProposteInUscita(data);
+
+                // aggiorna tutto
+                fetchMarket();
+                fetchUserFigurineInVendita();
+                figurina0Cointainer.innerHTML = '';
+                figurina1Container.innerHTML = '';
+            }
+
+        } catch (error) {
+            console.error('Errore durante la creazione del trade:', error);
+            alert('errore durante la creazione del trade');
+        }
+    }
+
+    // funzione per fetchare i trade in uscita
+    async function fetchTradeInUscita() {
+        try {
+            const response = await fetch('/api/market/trade/getTradeUscita', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) throw new Error("Errore durante il fetching di trade in uscita.");
+
+            const data = await response.json();
+            if (data.length === 0) {
+                console.log('non arrivano i dati del trade in uscita');
+            } else {
+                renderTradeInUscita(data.tradeDetails);
+            }
+
+        } catch (error) {
+            console.error('Errore durante il fetching di trade in uscita:', error);
+            alert('errore durante il fetching di trade in uscita');
+        }
+    }
+
+    // funzione per renderizzare i trade in uscita
+    // hai proposto a / di scambiare / in cambio di / stato
+    // => user1 / fig0 / fig1 / status
+    // dati ritornati da fetchTradeInUscita:
+    //     username0: username0,
+    //     fig0img: fig0img,
+    //     fig0name: fig0name,
+    //     fig1img: fig1img,
+    //     fig1name: fig1name,
+    //     username1: username1,
+    //     status: trade.status
+    function renderTradeInUscita(trades) {
+        tradeUscitaContainer.innerHTML = '';
+        
+        console.log('trades: ', trades);
+
+        trades.forEach(trade => {
+            const tr = document.createElement('tr');
+            tr.classList.add('bg-light');
+
+            // hai proposto a
+            const user1 = document.createElement('td');
+            user1.textContent = trade.username1; 
+            user1.classList.add('fw-strong');
+            tr.appendChild(user1);
+
+            // di scambiare
+            const fig0 = document.createElement('td');
+            fig0.classList.add('float-left');
+            const img0 = document.createElement('img');
+            img0.src = trade.fig0img;
+            img0.alt = trade.fig0name;
+            img0.classList.add('rounded', 'me-2');
+            img0.height = 40;
+            img0.width = 40;
+            fig0.appendChild(img0);
+            const fig0name = document.createElement('span');
+            fig0name.textContent = trade.fig0name;
+            fig0name.classList.add('fw-bold');
+            fig0.appendChild(fig0name);
+            tr.appendChild(fig0);
+
+            // in cambio di
+            const fig1 = document.createElement('td');
+            fig1.classList.add('float-left');
+            const img1 = document.createElement('img');
+            img1.src = trade.fig1img;
+            img1.alt = trade.fig1name;
+            img1.classList.add('rounded', 'me-2');
+            img1.height = 40;
+            img1.width = 40;
+            fig1.appendChild(img1);
+            const fig1name = document.createElement('span');
+            fig1name.textContent = trade.fig1name;
+            fig1name.classList.add('fw-bold');
+            fig1.appendChild(fig1name);
+            tr.appendChild(fig1);
+
+            // status
+            const status = document.createElement('td');
+            if (trade.status === 'pendente') {
+                // colore arancione
+                status.classList.add('text-warning');
+            } else if (trade.status === 'accettato') {
+                // colore verde
+                status.classList.add('text-success');
+            } else if (trade.status === 'rifiutato') {
+                // colore rosso
+                status.classList.add('text-danger');
+            }
+            status.textContent = trade.status;
+            tr.appendChild(status);
+
+            tradeUscitaContainer.appendChild(tr);
+        });
+    }
 
     // gestione eventi
     addToMarketButton.addEventListener('click', () => {
@@ -334,7 +513,13 @@ document.addEventListener('DOMContentLoaded', () => {
         removeFromMarket(getSelectedInVenditaIds());
     });
 
-    // quando lo si clicca deve mandare l'elemento market al modulo di baratto
+    proposeFig0Button.addEventListener('click', () => {
+        const selected = getSelectedInVenditaIds();
+        console.log('figurine checkate: ', selected);
+        fetchMarket0(selected);
+    });
+
+    // quando si clicca un bottone della tabella deve mandare l'elemento market al modulo di baratto
     marketTableBody.addEventListener('click', function(event) {
         if (event.target.tagName === 'BUTTON' ) {
             const buttonData = event.target;
@@ -344,10 +529,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // quando lo si clicca bisogna chiamare sendTrade
+    proposeTradeButton.addEventListener('click', () => {
+        const elementi = getMarketId();
+        sendTrade(elementi[0], elementi[1]);
+    });
+
     // chiamate finali per far andare le cose
+    fetchUsername();
     fetchUserFigurine();
     fetchUserFigurineInVendita();
     fetchMarket();
+    fetchTradeInUscita();
 });
 
 // ho bisogno di un qualcosa che selezionata una figurina con la checkbox, mi trovi l'id market corrispondente, così da poterlo mandare al backend
