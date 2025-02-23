@@ -11,6 +11,7 @@ const MarketSchema = new mongoose.Schema({
     idUtente: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // riferimento all'utente che ha messo la figurina a mercato
     idPersonaggio: { type: Number, required: true }, // id della figurina
     data: { type: Date, default: Date.now }, // data di creazione della proposta
+    idFigurinaObj: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 
 const Market = mongoose.model('Market', MarketSchema);

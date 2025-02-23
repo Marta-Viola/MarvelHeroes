@@ -63,16 +63,17 @@
                                 <tr>
                                     <th scope="col">Utente</th>
                                     <th scope="col">Figurina Proposta</th>
-                                    <!-- <th scope="col">Nota</th> -->
                                     <th scope="col">Proponi Baratto</th>
                                 </tr>
                             </thead>
                             <tbody id="marketplace-table">
-                                <tr><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td></tr>
+                                <tr class="bg-light">
+                                    <td colspan="3" class="text-muted py-3">Nessuna offerta disponibile</td>
+                                </tr>
+                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
                                 <!-- riga di esempio: -->
                                 <!-- <tr>
                                     <td><strong>MarioRossi</strong></td>
@@ -148,18 +149,20 @@
                                 <table class="table text-center align-middle table-striped table-bordered">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Utente</th>
-                                            <th>Ti da</th>
-                                            <th>In cambio di</th>
-                                            <th>Azioni</th>
+                                            <th scope="col">Utente</th>
+                                            <th scope="col">Ti da</th>
+                                            <th scope="col">In cambio di</th>
+                                            <th scope="col">Azioni</th>
                                         </tr>
                                     </thead>
                                     <tbody id="proposte-scambio-list">
-                                        <tr><td></td><td></td><td></td><td></td></tr>
-                                        <tr><td></td><td></td><td></td><td></td></tr>
-                                        <tr><td></td><td></td><td></td><td></td></tr>
-                                        <tr><td></td><td></td><td></td><td></td></tr>
-                                        <tr><td></td><td></td><td></td><td></td></tr>
+                                        <tr class="bg-light">
+                                            <td colspan="3" class="text-muted py-3">Nessuna proposta disponibile</td>
+                                        </tr>
+                                        <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                                        <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                                        <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                                        <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
                                         <!-- proposte di scambio caricate qui -->
                                     </tbody>
                                 </table>
@@ -169,14 +172,14 @@
                          <!-- sezione laterale per la preview dello scambio -->
                          <div class="col-md-4">
                             <div class="border-rounded p-3 text-center">
-                                <h6 class="text-light">Anteprima scambio</h6>
+                                <h6 class="text-light">Anteprima scambio con <span id="username0-span" class="fw-bold"></span></h6>
                                 <div class="d-flex flex-column align-items-center">
                                     <p class="mb-1 text-light">Hai dato:</p>
-                                    <div id="scambio-figurina-out" class="border p-2 mb-3" style="width: 120px; height: 120px;">
+                                    <div id="scambio-figurina-out" class="p-2 mb-3">
                                         <!-- figurina data caricata qui -->
                                     </div>
                                     <p class="mb-1 text-light">In cambio di:</p>
-                                    <div id="scambio-figurina-in" class="border p-2" style="width: 120px; height: 120px;">
+                                    <div id="scambio-figurina-in" class="p-2">
                                         <!-- figurina ricevuta caricata qui -->
                                     </div>
                                 </div>
@@ -187,7 +190,7 @@
                     <h6 class="text-light text-center">In Uscita</h6>
                     <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                         <table class="table text-center align-middle table-striped table-hover">
-                            <thead class="table-dark">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Hai proposto a</th>
                                     <th>Di scambiare</th>
@@ -196,11 +199,13 @@
                                 </tr>
                             </thead>
                             <tbody id="storico-proposte-list">
-                                <tr><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td></tr>
+                                <tr class="bg-light">
+                                    <td colspan="3" class="text-muted py-3">Nessuna proposta disponibile</td>
+                                </tr>
+                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
                                 <!-- storico delle proposte di scambio caricate qui -->
                             </tbody>
                         </table>

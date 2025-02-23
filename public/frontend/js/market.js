@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // elementi della sezione 3
     const tradeEntrataContainer = document.getElementById('proposte-scambio-list')
+    const userTraderSpan = document.getElementById('username0-span');
+    const figurinaOutContainer = document.getElementById('scambio-figurina-out');
+    const figurinaInContainer = document.getElementById('scambio-figurina-in');
     const tradeUscitaContainer = document.getElementById('storico-proposte-list');
     const destinatarioBarattoSpan = document.getElementById('username-destinatario');
     const figurina0Cointainer = document.getElementById('baratto-uscita-tu-dai');
@@ -396,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // aggiorna tutto
                 fetchMarket();
                 fetchUserFigurineInVendita();
+                // fetchTradeInUscita??
                 figurina0Cointainer.innerHTML = '';
                 figurina1Container.innerHTML = '';
             }
@@ -440,69 +444,71 @@ document.addEventListener('DOMContentLoaded', () => {
     //     username1: username1,
     //     status: trade.status
     function renderTradeInUscita(trades) {
-        tradeUscitaContainer.innerHTML = 'non ci sono trade in uscita.';
-        
         console.log('trades: ', trades);
+        
+        if (trades.lenght !== 0) {
+            tradeUscitaContainer.innerHTML = '';
 
-        trades.forEach(trade => {
-            const tr = document.createElement('tr');
-            tr.classList.add('bg-light');
-
-            // hai proposto a
-            const user1 = document.createElement('td');
-            user1.textContent = trade.username1; 
-            user1.classList.add('fw-strong');
-            tr.appendChild(user1);
-
-            // di scambiare
-            const fig0 = document.createElement('td');
-            fig0.classList.add('float-left');
-            const img0 = document.createElement('img');
-            img0.src = trade.fig0img;
-            img0.alt = trade.fig0name;
-            img0.classList.add('rounded', 'me-2');
-            img0.height = 40;
-            img0.width = 40;
-            fig0.appendChild(img0);
-            const fig0name = document.createElement('span');
-            fig0name.textContent = trade.fig0name;
-            fig0name.classList.add('fw-bold');
-            fig0.appendChild(fig0name);
-            tr.appendChild(fig0);
-
-            // in cambio di
-            const fig1 = document.createElement('td');
-            fig1.classList.add('float-left');
-            const img1 = document.createElement('img');
-            img1.src = trade.fig1img;
-            img1.alt = trade.fig1name;
-            img1.classList.add('rounded', 'me-2');
-            img1.height = 40;
-            img1.width = 40;
-            fig1.appendChild(img1);
-            const fig1name = document.createElement('span');
-            fig1name.textContent = trade.fig1name;
-            fig1name.classList.add('fw-bold');
-            fig1.appendChild(fig1name);
-            tr.appendChild(fig1);
-
-            // status
-            const status = document.createElement('td');
-            if (trade.status === 'pendente') {
-                // colore arancione
-                status.classList.add('text-warning');
-            } else if (trade.status === 'accettato') {
-                // colore verde
-                status.classList.add('text-success');
-            } else if (trade.status === 'rifiutato') {
-                // colore rosso
-                status.classList.add('text-danger');
-            }
-            status.textContent = trade.status;
-            tr.appendChild(status);
-
-            tradeUscitaContainer.appendChild(tr);
-        });
+            trades.forEach(trade => {
+                const tr = document.createElement('tr');
+                tr.classList.add('bg-light');
+    
+                // hai proposto a
+                const user1 = document.createElement('td');
+                user1.textContent = trade.username1; 
+                user1.classList.add('fw-strong');
+                tr.appendChild(user1);
+    
+                // di scambiare
+                const fig0 = document.createElement('td');
+                fig0.classList.add('float-left');
+                const img0 = document.createElement('img');
+                img0.src = trade.fig0img;
+                img0.alt = trade.fig0name;
+                img0.classList.add('rounded', 'me-2');
+                img0.height = 40;
+                img0.width = 40;
+                fig0.appendChild(img0);
+                const fig0name = document.createElement('span');
+                fig0name.textContent = trade.fig0name;
+                fig0name.classList.add('fw-bold');
+                fig0.appendChild(fig0name);
+                tr.appendChild(fig0);
+    
+                // in cambio di
+                const fig1 = document.createElement('td');
+                fig1.classList.add('float-left');
+                const img1 = document.createElement('img');
+                img1.src = trade.fig1img;
+                img1.alt = trade.fig1name;
+                img1.classList.add('rounded', 'me-2');
+                img1.height = 40;
+                img1.width = 40;
+                fig1.appendChild(img1);
+                const fig1name = document.createElement('span');
+                fig1name.textContent = trade.fig1name;
+                fig1name.classList.add('fw-bold');
+                fig1.appendChild(fig1name);
+                tr.appendChild(fig1);
+    
+                // status
+                const status = document.createElement('td');
+                if (trade.status === 'pendente') {
+                    // colore arancione
+                    status.classList.add('text-warning');
+                } else if (trade.status === 'accettato') {
+                    // colore verde
+                    status.classList.add('text-success');
+                } else if (trade.status === 'rifiutato') {
+                    // colore rosso
+                    status.classList.add('text-danger');
+                }
+                status.textContent = trade.status;
+                tr.appendChild(status);
+    
+                tradeUscitaContainer.appendChild(tr);
+            });
+        }  
     }
 
     //funzione per fetchare i trade in entrata
@@ -538,105 +544,202 @@ document.addEventListener('DOMContentLoaded', () => {
     //     username1: username1,
     //     status: trade.status
     function renderTradeInEntrata(trades) {
-        tradeEntrataContainer.innerHTML = '';
-        
         console.log('trades: ', trades);
 
-        trades.forEach(trade => {
-            const tr = document.createElement('tr');
-            // tr.classList.add('bg-light');
-            if (trade.status === 'pendente') {
-                // colore arancione
-                tr.classList.add('bg-warning', 'bg-opacity-75');
-            } else if (trade.status === 'accettato') {
-                // colore verde
-                tr.classList.add('bg-success', 'bg-opacity-75');
-            } else if (trade.status === 'rifiutato') {
-                // colore rosso
-                tr.classList.add('bg-danger', 'bg-opacity-75');
+        if (trades.lenght !== 0) {
+            tradeEntrataContainer.innerHTML = '';
+
+            trades.forEach(trade => {
+                const tr = document.createElement('tr');
+                // tr.classList.add('bg-light');
+                if (trade.status === 'pendente') {
+                    // colore arancione
+                    tr.classList.add('bg-warning', 'bg-opacity-75');
+                } else if (trade.status === 'accettato') {
+                    // colore verde
+                    tr.classList.add('bg-success', 'bg-opacity-75');
+                } else if (trade.status === 'rifiutato') {
+                    // colore rosso
+                    tr.classList.add('bg-danger', 'bg-opacity-75');
+                }
+    
+                // utente
+                const user0 = document.createElement('td');
+                user0.textContent = trade.username0; 
+                // console.log('(renderTableInEntrata) trade.username0: ', trade.username0);
+                user0.classList.add('fw-bold');
+                tr.appendChild(user0);
+    
+                // ti da
+                const fig0 = document.createElement('td');
+                // fig0.classList.add('float-left');
+                const divFig0 = document.createElement('div');
+                divFig0.classList.add('d-flex', 'align-items-center');
+                
+                const img0 = document.createElement('img');
+                img0.src = trade.fig0img;
+                img0.alt = trade.fig0name;
+                img0.classList.add('rounded', 'me-2');
+                img0.height = 40;
+                img0.width = 40;
+                divFig0.appendChild(img0);
+                
+                const fig0name = document.createElement('span');
+                fig0name.textContent = trade.fig0name;
+                fig0name.classList.add('fw-bold', 'text-truncate');
+                fig0name.style.maxWidth = '150px';
+                divFig0.appendChild(fig0name);
+                fig0.appendChild(divFig0);
+                tr.appendChild(fig0);
+    
+                // in cambio di
+                const fig1 = document.createElement('td');
+                // fig1.classList.add('float-left');
+                const divFig1 = document.createElement('div');
+                divFig1.classList.add('d-flex', 'align-items-center');
+    
+                const img1 = document.createElement('img');
+                img1.src = trade.fig1img;
+                img1.alt = trade.fig1name;
+                img1.classList.add('rounded', 'me-2');
+                img1.height = 40;
+                img1.width = 40;
+                divFig1.appendChild(img1);
+    
+                const fig1name = document.createElement('span');
+                fig1name.textContent = trade.fig1name;
+                fig1name.classList.add('fw-bold', 'text-truncate');
+                fig1name.style.maxWidth = '150px';
+                divFig1.appendChild(fig1name);
+                fig1.appendChild(divFig1);
+                tr.appendChild(fig1);
+    
+                // azioni!
+                // bottoni per accettare o rifiutare il trade
+                const actions = document.createElement('td');
+                const divActions = document.createElement('div');
+                divActions.classList.add('d-flex', 'flex-wrap', 'justify-content-between');
+                // actions.classList.add('d-flex', 'justify-content-between');
+                
+                if (trade.status === 'pendente') {
+                    const acceptButton = document.createElement('button');
+                    acceptButton.type = 'submit';
+                    acceptButton.classList.add('btn', 'btn-sm', 'btn-success', 'w-100');
+                    acceptButton.textContent = 'Accetta';
+                    acceptButton.addEventListener('click', () => {
+                        acceptTrade(trade.tradeId);
+                    });
+    
+                    const rejectButton = document.createElement('button');
+                    rejectButton.type = 'submit';
+                    rejectButton.classList.add('btn', 'btn-sm', 'btn-danger', 'w-100');
+                    rejectButton.textContent = 'Rifiuta';
+                    rejectButton.addEventListener('click', () => {
+                        rejectTrade(trade.tradeId);
+                });
+    
+                divActions.appendChild(acceptButton);
+                divActions.appendChild(rejectButton);
+                } else {
+                    actions.innerHTML = '';
+                }
+
+                actions.appendChild(divActions);
+                tr.appendChild(actions);
+                
+                tradeEntrataContainer.appendChild(tr);
+            });
+        }
+    }
+
+    async function rejectTrade(tradeId) {
+        console.log('(rejectTrade) tradeId: ', tradeId);
+        try {
+            const response = await fetch('/api/market/trade/reject', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ tradeId: tradeId })
+            });
+            if (!response.ok) {
+                throw new Error('Impossibile rifiutare il trade');
             }
 
-            // utente
-            const user0 = document.createElement('td');
-            user0.textContent = trade.username0; 
-            user0.classList.add('fw-bold');
-            tr.appendChild(user0);
+            const data = await response.json();
+            console.log('trade rifiutato: ', data);
 
-            // ti da
-            const fig0 = document.createElement('td');
-            // fig0.classList.add('float-left');
-            const divFig0 = document.createElement('div');
-            divFig0.classList.add('d-flex', 'align-items-center');
-            
-            const img0 = document.createElement('img');
-            img0.src = trade.fig0img;
-            img0.alt = trade.fig0name;
-            img0.classList.add('rounded', 'me-2');
-            img0.height = 40;
-            img0.width = 40;
-            divFig0.appendChild(img0);
-            
-            const fig0name = document.createElement('span');
-            fig0name.textContent = trade.fig0name;
-            fig0name.classList.add('fw-bold', 'text-truncate');
-            fig0name.style.maxWidth = '150px';
-            divFig0.appendChild(fig0name);
-            fig0.appendChild(divFig0);
-            tr.appendChild(fig0);
+            fetchTradeInEntrata();
 
-            // in cambio di
-            const fig1 = document.createElement('td');
-            // fig1.classList.add('float-left');
-            const divFig1 = document.createElement('div');
-            divFig1.classList.add('d-flex', 'align-items-center');
+        } catch (error) {
+            console.error('Impossibile rifiutare il trade:', error);
+            alert('Impossibile rifiutare il trade');
+        }
+    }
 
-            const img1 = document.createElement('img');
-            img1.src = trade.fig1img;
-            img1.alt = trade.fig1name;
-            img1.classList.add('rounded', 'me-2');
-            img1.height = 40;
-            img1.width = 40;
-            divFig1.appendChild(img1);
+    async function acceptTrade(tradeId) {
+        try {
+            const response = await fetch('/api/market/trade/accept', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ tradeId: tradeId })
+            });
+            if (!response.ok) {
+                throw new Error('Impossibile accettare il trade');
+            }
 
-            const fig1name = document.createElement('span');
-            fig1name.textContent = trade.fig1name;
-            fig1name.classList.add('fw-bold', 'text-truncate');
-            fig1name.style.maxWidth = '150px';
-            divFig1.appendChild(fig1name);
-            fig1.appendChild(divFig1);
-            tr.appendChild(fig1);
+            const data = await response.json();
+            console.log('Trade accettato: ', data);
+            console.log('data.tradeDetails = ', data.tradeDetails); 
+            if (data.length === 0) {
+                console.log('non arrivano i dati del trade accettato.');
+            } else {
+                renderTradeAccettato(data.tradeDetails);
+                fetchTradeInEntrata();
+            }
 
-            // azioni!
-            // toggle per accettare o rifiutare il trade
-            const actions = document.createElement('td');
-            const divActions = document.createElement('div');
-            divActions.classList.add('d-flex', 'flex-wrap', 'justify-content-between');
-            // actions.classList.add('d-flex', 'justify-content-between');
-            
-            const acceptButton = document.createElement('button');
-            acceptButton.type = 'submit';
-            acceptButton.classList.add('btn', 'btn-sm', 'btn-success', 'w-100');
-            acceptButton.textContent = 'Accetta';
-            // acceptButton.addEventListener('click', () => {
-            //     acceptTrade(trade.id);
-            // });
+            // bisogna mostrare il trade appena accettato
+            // ma abbiamo i figObj = {(int) idPersonaggio, (String) nome, (obj) _id}
+            // manca solo l'immagine T-T
 
-            const rejectButton = document.createElement('button');
-            rejectButton.type = 'submit';
-            rejectButton.classList.add('btn', 'btn-sm', 'btn-danger', 'w-100');
-            rejectButton.textContent = 'Rifiuta';
-            // rejectButton.addEventListener('click', () => {
-            //     rejectTrade(trade.id);
-            // });
+            // data ora è tradeDetails yay
 
-            divActions.appendChild(acceptButton);
-            divActions.appendChild(rejectButton);
+            // qui c'è un errore perché l'accettazione non va abuon fineee
+            // ah... avevo messo /reject come trade... quindi ora il trade è rifiutato :(
 
-            actions.appendChild(divActions);
-            tr.appendChild(actions);
-            
-            tradeEntrataContainer.appendChild(tr);
-        })
+        } catch (error) {
+            console.error('Errore durante l\'accettazione del trade', error);
+            alert('errore durante l\'accettazione del trade');
+        }
+    }
+
+    function renderTradeAccettato(trade) {
+        userTraderSpan.innerHTML = '';
+        figurinaOutContainer.innerHTML = '';
+        figurinaInContainer.innerHTML = '';
+
+        // 'con'
+        userTraderSpan.innerText = trade.username1;
+
+        console.log('(renderTradeAccettazione) trade.fig1name: ', trade.fig1name);
+
+        // 'hai dato' => fig1
+        figurinaOutContainer.innerHTML =
+            `<div class="figurina border p-3 mb-3 shadow-sm position-relative text-center w-100">
+                <img src="${trade.fig1img}" alt="${trade.fig1name}" class="img-fluid figurina-image">
+                <h5 class="figurina-name text-light">${trade.fig1name}</h5>
+            </div> `;
+        
+        // 'in cambio di' => fig0
+        figurinaInContainer.innerHTML =
+            `<div class="figurina border p-3 mb-3 shadow-sm position-relative text-center w-100">
+                <img src="${trade.fig0img}" alt="${trade.fig0name}" class="img-fluid figurina-image">
+                <h5 class="figurina-name text-light">${trade.fig0name}</h5>
+            </div> `;
     }
 
     // gestione eventi

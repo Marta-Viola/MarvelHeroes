@@ -28,7 +28,9 @@ const TradeSchema = new mongoose.Schema({
         type: String, 
         required: true,
         enum: ['pendente', 'accettato', 'rifiutato']
-    }
+    },
+    idFig0Obj: { type: mongoose.Schema.Types.ObjectId, ref: 'Market', required: true },
+    idFig1Obj: { type: mongoose.Schema.Types.ObjectId, ref: 'Market', required: true },
 });
 
 const Trade = mongoose.model('Trade', TradeSchema);
