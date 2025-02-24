@@ -16,6 +16,10 @@ import packsRoutes from './public/backend/routes/packsRoutes.js';
 import albumRoutes from './public/backend/routes/albumRoutes.js';
 import marketRoutes from './public/backend/routes/marketRoutes.js';
 
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUI from 'swagger-ui-express';
+import yaml from 'js-yaml';
+
 //configurazioni
 dotenv.config();
 const app = express();
@@ -46,7 +50,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/user', [creditsRoutes, profileRoutes]);
 app.use('/api/user', profileRoutes);
-app.use('/api/packs', authMiddleware, packsRoutes);
+app.use('/api/packs', packsRoutes);
 app.use('/api/album', albumRoutes);
 app.use('/api/market', marketRoutes);
 
@@ -97,9 +101,27 @@ app.options('*', cors({
     credentials: true
 }));
 
-//API home figurine
-// function getHash(ts, publicKey, privateKey) {
-//     return crypto.createHash('md5').update(ts + privateKey + publicKey).digest('hex');
-// }
-
 app.use('/api/figurine', figurineRoutes);
+
+// configurazione swagger
+const swaggerOptions = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "API di MarvelHeroes",
+            version: "1.0.0",
+            description: "Documentazione delle API per MarvelHeroes",
+        },
+        servers: [
+            {
+                url: "http://127.0.0.1:3000",
+                description: "Server locale"
+            }
+        ]
+    },
+    apis: ["public/backend/swagger/swagger.yaml"]
+};
+
+// inizializzazione Swagger
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocs));

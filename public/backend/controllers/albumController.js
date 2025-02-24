@@ -26,15 +26,6 @@ function filterFigurineBySearchQuery(figurine, searchQuery) {
     return figurine;
 }
 
-// funzione per paginare le figurine
-// async function displayUserFigurine(page, limit, searchQuery, filteredFigurineIds) {
-//     const paginatedFigurine = filteredFigurineIds.slice((page - 1) * limit, page * limit);
-//     const FigurineDetails = await getFigurineDetails(paginatedFigurine);
-//     const filteredFigurine = filterFigurineBySearchQuery(FigurineDetails, searchQuery);
-    
-//     return filteredFigurine;
-// }
-
 // funzione per ottenere l'album dall'utente
 export const getUserAlbum = async (req, res) => {
     try {
@@ -66,15 +57,13 @@ export const getUserAlbum = async (req, res) => {
             .then(filteredIds => filteredIds.filter(Boolean))
             : ownedFigurineIds;
 
-        // paginare l'array filteredFigurineIds
+        // pagina l'array filteredFigurineIds
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
         const paginatedFigurineIds = filteredFigurineIds.slice(startIndex, endIndex);
         
         const FigurineDetails = await getFigurineDetails(paginatedFigurineIds);
         const totalCount = Math.ceil(filteredFigurineIds.length / limit);
-        
-        console.log('quante figurine:', filteredFigurineIds.length);
 
         res.json({
             data: FigurineDetails,

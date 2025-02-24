@@ -83,13 +83,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Funzione per acquistare un pacchetto
     async function BuyPack() {
         try {
-            const response = await fetch('http://127.0.0.1:3000/api/packs', {
+            const response = await fetch('http://127.0.0.1:3000/api/packs/buy', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({})
             });
 
             if (!response.ok) {

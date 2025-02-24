@@ -1,0 +1,1597 @@
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /api/landing:
+    tags:
+      - HTML
+    get:
+      summary: ottiene la prima pagina del sito
+      responses:
+        200:
+          description: landing page HTML
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /api/signup:
+    tags:
+      - HTML
+    get:
+      summary: ottiene la pagina di iscrizione
+      responses:
+        200:
+          description: signup page HTML
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /api/login:
+    tags:
+      - HTML
+    get:
+      summary: ottiene la pagina di accesso
+      responses:
+        200:
+          description: login page HTML
+          content:
+            text/html:
+              schema:
+                type: string
+  
+  /api/homepage:
+    tags:
+      - HTML
+    get:
+      summary: ottiene la homepage
+      responses:
+        200:
+          description: homepage HTML
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /api/myalbum:
+    tags:
+      - HTML
+    get:
+      summary: ottiene la pagina di album di user
+      responses:
+        200:
+          description: myalbum HTML
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /api/myprofile:
+    tags:
+      - HTML
+    get:
+      summary: ottiene la pagina di modifica del profilo
+      responses:
+        200:
+          description: profile page HTML
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /api/baratto:
+    tags:
+      - HTML
+    get:
+      summary: ottiene la pagina di baratto
+      responses:
+        200:
+          description: trade page HTML
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /api/compra_pac:
+    tags:
+      - HTML
+    get:
+      summary: ottiene la pagina di compra pacchetti
+      responses:
+        200:
+          description: buy packs page HTML
+          content:
+            text/html:
+              schema:
+                type: string
+              
+  /api/compra_cre:
+    tags:
+      - HTML
+    get:
+      summary: ottiene la pagina di compra crediti
+      responses:
+        200:
+          description: buy credits page HTML
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /api/auth/signup:
+    post:
+      summary: registra un nuovo utente
+      description: crea un nuovo account utente nel sistema.
+      tags:
+        - Autenticazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: "user123"
+                password:
+                  type: string
+                  format: password
+                  example: "Password123!"
+                email:
+                  type: string
+                  format: email
+                  example: "user123@example.com"
+                hero:
+                  type: string
+                  example: "Iron Man"
+      responses:
+        "201":
+          description: utente creato con successo
+          constent:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Utente creato con successo"
+                  redirect:
+                    type: string
+                    example: "/api/login"
+          "400":
+            description: Errore nei dati inviati (es. username/email già esistenti)
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: "Username già utilizzato"
+          "500":
+            description: Errore interno del server
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: "Errore interno del server"
+
+  /api/auth/login:
+    post:
+      summary: fa accedere un utente
+      tags:
+        - Autenticazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "user123@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "Password123!"
+        responses:
+          "200":
+            description: accesso avvenuto correttamente
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                      message: 
+                        type: string
+                      redirect:
+                        type: string
+                      token:
+                        type: string
+                      user:
+                        type: object
+                        properties:
+                          username:
+                            type: string
+                          email:
+                            type: string
+                          hero:
+                            type: string
+                          credits:
+                            type: integer
+                example:
+                  message: "Login effettuato con successo"
+                  redirect: "/api/homepage"
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                  user:
+                    username: "user123"
+                    email: "user123@example.com"
+                    hero: "iron man"
+                    credits: 15
+          "400":
+            description: Errore, dati incompleti
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: "Email e password sono obbligatori"
+          "401":
+            description: credenziali non valide
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: "Credenziali non valide"
+          "500":
+            description: errore del server
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      example: "Errore interno del server"
+
+  /api/auth/user:
+    get:
+      summary: ottiene dati user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: dati utenti ricevuti con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: object
+                    example: "67bb654e0dd6b93014a83552"
+                  username:
+                    type: string
+                    example: "user123"
+                  password:
+                    type: string
+                    format: password
+                    example: "Password123!"
+                  email:
+                    type: string
+                    example: "user123@example.com"
+                  hero:
+                    type: string
+                    example: "Iron Man"
+                  credits:
+                    type: integer
+                    example: 6
+                  figurinePossedute:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idPersonaggio:
+                          type: integer
+                          example: 1010949
+                        nome:
+                          type: string
+                          example: "Iron Man"
+                        _id:
+                          type: object
+                          example: "67bb654e0dd6b93014a83552"
+                  figurineInVendita:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idPersonaggio:
+                          type: integer
+                          example: 1010949
+                        nome:
+                          type: string
+                          example: "Iron Man"
+                        _id:
+                          type: object
+                          example: "67bb654e0dd6b93014a83552"
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: User non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/user/credits:
+    post:
+      summary: aggiunge crediti all'utente
+      description: aggiunge un certo numero di crediti all'utente
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: integer
+                  example: 10
+      responses:
+        "200":
+          description: crediti aggiunti con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Crediti aggiunti con successo"
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente non trovato."
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  
+  /api/user/profile:
+    put:
+      summary: Aggiorna i dati dell'utente
+      description: Aggiorna i dati dell'utente
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: updatedData
+          description: Nuovi dati dell'utente
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              hero:
+                type: string
+              oldPassword:
+                type: string
+              newPassword:
+                type: string
+      responses:
+        "200":
+          description: Profilo aggiornato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    get:
+      summary: Ottieni il profilo dell'utente
+      description: Ottieni il profilo dell'utente
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Profilo dell'utente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  hero:
+                    type: string
+                  credits:
+                    type: number
+                  figurinePossedute:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idPersonaggio:
+                          type: number
+                        nome:
+                          type: string
+                  figurineInVendita:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idPersonaggio:
+                          type: number
+                        nome:
+                          type: string
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente non trovato."
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/packs/buy:
+    post:
+      summary: Acquista un pacchetto di figurine
+      description: Acquista un pacchetto di figurine
+      tags:
+        - Packs
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Pacchetto acquistato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Pacchetto acquistato con successo!"
+                  updatedCredits:
+                    type: integer
+                    example: 9
+                  cards:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1010949
+                        name:
+                          type: string
+                          example: "Iron Man"
+        "400":
+          description: Crediti insufficienti per acquistare un pacchetto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Crediti insufficienti per acquistare un pacchetto."
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente non trovato."
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante l'acquisto del pacchetto."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                packId:
+                  type: integer
+                  example: 1
+
+  /api/album:
+    get:
+      summary: Ottieni l'album dell'utente
+      description: Ottieni l'album dell'utente
+      tags:
+        - Album
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          example: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          example: 12
+        - in: query
+          name: name
+          schema:
+            type: string
+          example: "iron man"
+      responses:
+        "200":
+          description: Album ottenuto con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idFigurina:
+                          type: integer
+                          example: 1
+                        nome:
+                          type: string
+                          example: "iron man"
+                        image:
+                          type: string
+                          example: "ironman.jpg"
+                  page:
+                    type: integer
+                    example: 1
+                  totalPages:
+                    type: integer
+                    example: 12
+                  searchQuery:
+                    type: string
+                  message:
+                    type: string
+                    example: "Album ottenuto con successo"
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente non trovato."
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante il recupero dell'album."
+
+  /api/market/username:
+    get:
+      summary: Mostra l'username dell'utente
+      description: Mostra l'username dell'utente
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Username ottenuto con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  message:
+                    type: string
+                    example: "Username ottenuto con successo"
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente non trovato."
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "non trovo l'username"
+
+  /api/market/figurine:
+    get:
+      summary: Mostra le figurine possedute dall'utente
+      description: Mostra le figurine possedute dall'utente
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Figurine possedute ottenute con successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    idFigurina:
+                      type: integer
+                      example: 1
+                    nome:
+                      type: string
+                      example: "iron man"
+                    image:
+                      type: string
+                      example: "ironman.jpg"
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/market/figurineInVendita:
+    get:
+      summary: Mostra le figurine in vendita
+      description: Mostra le figurine in vendita
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Figurine in vendita ottenute con successo
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    idFigurina:
+                      type: integer
+                      example: 1
+                    nome:
+                      type: string
+                      example: "iron man"
+                    image:
+                      type: string
+                      example: "ironman.jpg"
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/market/addToMarket:
+    post:
+      summary: Aggiungi una o pi  figurine al mercato
+      description: Aggiungi una o pi  figurine al mercato
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                figurineIds:
+                  type: array
+                  items:
+                    type: integer
+                    example: 1
+      responses:
+        "200":
+          description: Figurine aggiunte con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updatedFigurinePossedute:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idFigurina:
+                          type: integer
+                          example: 1
+                        nome:
+                          type: string
+                          example: "iron man"
+                        image:
+                          type: string
+                          example: "ironman.jpg"
+                  updatedFigurineInVendita:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idFigurina:
+                          type: integer
+                          example: 1
+                        nome:
+                          type: string
+                          example: "iron man"
+                        image:
+                          type: string
+                          example: "ironman.jpg"
+        "400":
+          description: Nessuna figurina selezionata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Nessuna figurina selezionata."
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/market/removeFromMarket:
+    post:
+      summary: Rimuove le figurine dal mercato
+      tags:
+        - Market
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                figurineIds:
+                  type: array
+                  items:
+                    type: integer
+                  example: [1,2,3]
+      responses:
+        "200":
+          description: Figurine rimosse
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  updatedFigurinePossedute:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idFigurina:
+                          type: integer
+                          example: 1
+                        nome:
+                          type: string
+                          example: "iron man"
+                        image:
+                          type: string
+                          example: "ironman.jpg"
+                  updatedFigurineInVendita:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        idFigurina:
+                          type: integer
+                          example: 1
+                        nome:
+                          type: string
+                          example: "iron man"
+                        image:
+                          type: string
+                          example: "ironman.jpg"
+        "400":
+          description: Nessuna figurina selezionata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Nessuna figurina selezionata."
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/market/getMarket:
+    get:
+      summary: Ritorna le informazioni delle figurine sul mercato
+      tags:
+        - Market
+      responses:
+        "200":
+          description: Figurine sul mercato
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    username:
+                      type: string
+                    imageUrl:
+                      type: string
+                    figurinaName:
+                      type: string
+                    idFigurina:
+                      type: integer
+                    marketId:
+                      type: string
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/market/trade/getMarket0Element:
+    post:
+      summary: Ritorna l'elemento market0 dell'utente per il trade
+      tags:
+        - Market
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fig0Id:
+                  type: integer
+      responses:
+        "200":
+          description: Elemento market0 dell'utente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  imageUrl:
+                    type: string
+                  figurinaName:
+                    type: string
+                  idFigurina:
+                    type: integer
+                  marketId:
+                    type: string
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/market/trade/getMarket1Element:
+    post:
+      summary: Ritorna l'elemento market1 per il trade
+      tags:
+        - Market
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                market1Id:
+                  type: string
+      responses:
+        "200":
+          description: Elemento market1 per il trade
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  imageUrl:
+                    type: string
+                  figurinaName:
+                    type: string
+                  idFigurina:
+                    type: integer
+                  marketId:
+                    type: string
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /api/market/trade/create:
+    post:
+      summary: Crea un nuovo trade tra due elementi di mercato
+      tags:
+        - Market
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                market0Id:
+                  type: string
+                market1Id:
+                  type: string
+      responses:
+        "200":
+          description: Trade creato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Trade creato con successo"
+                  data:
+                    type: string
+                    example: "tradeId"
+        "400":
+          description: Errore nel recupero dei dati market per il trade
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore nel recupero dei dati market per il trade."
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente non trovato."
+        "500":
+          description: Errore durante la creazione del trade
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante la creazione del trade"
+
+  /api/market/trade/getTradeUscita:
+    get:
+      summary: Ottiene i trade in uscita dell'utente
+      tags:
+        - Market
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Trade in uscita ottenuti con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tradeDetails:
+                    type: array
+                    items:
+                      type: object
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente non trovato."
+        "500":
+          description: Errore durante la ricerca dei trade in uscita
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante la ricerca dei trade in uscita"
+
+  /api/market/trade/getTradeEntrata:
+    get:
+      summary: Ottiene i trade in entrata dell'utente
+      tags:
+        - Market
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Trade in entrata ottenuti con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tradeDetails:
+                    type: array
+                    items:
+                      type: object
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        "404":
+          description: Utente non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente non trovato."
+        "500":
+          description: Errore durante la ricerca dei trade in entrata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante la ricerca dei trade in entrata"
+  
+  /api/market/trade/reject:
+    post:
+      summary: Rifiuta un trade
+      description: Rifiuta un trade in base all'id del trade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tradeId:
+                  type: string
+                  required: true
+                  example: '5f9f1c5a86d1b40f50a4f123'
+      responses:
+        "200":
+          description: Trade rifiutato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Trade rifiutato con successo."
+        "400":
+          description: Dati mancanti o non validi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante il rifiuto del trade."
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Token mancante o non valido"
+        "404":
+          description: Utente o trade non trovati
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente o trade non trovati"
+        "500":
+          description: Errore durante il rifiuto del trade
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante il rifiuto del trade"
+
+  /api/market/trade/accept:
+    post:
+      summary: Accetta un trade
+      tags:
+        - Market
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tradeId:
+                  type: string
+                  required: true
+                  example: '5f9f1c5a86d1b40f50a4f123'
+      responses:
+        "200":
+          description: Trade accettato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tradeDetails:
+                    type: object
+                    properties:
+                      tradeId:
+                        type: string
+                        description: Trade ID
+                      username0:
+                        type: string
+                        description: Username del primo user
+                      fig0img:
+                        type: string
+                        description: Image URL della prima figurina
+                      fig0name:
+                        type: string
+                        description: nome della prima figurina
+                      fig1img:
+                        type: string
+                        description: Image URL della seconda figurina
+                      fig1name:
+                        type: string
+                        description: nome della seconda figurina
+                      username1:
+                        type: string
+                        description: Username del secondo user
+                      status:
+                        type: string
+                        description: Status del trade
+                message:
+                  type: string
+                  example: "Trade accettato con successo."
+        "400":
+          description: Dati mancanti o non validi
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante l'accettazione del trade."
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Token mancante o non valido"
+        "404":
+          description: Utente o trade non trovati
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente o trade non trovati"
+        "500":
+          description: Errore durante l'accettazione del trade
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante l'accettazione del trade"
+
+  /api/figurine:
+    get:
+      summary: Ottiene le figurine
+      parameters:
+        - name: page
+          in: query
+          description: Numero della pagina
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          description: Numero di elementi per pagina
+          required: false
+          schema:
+            type: integer
+            default: 12
+        - name: name
+          in: query
+          description: Nome per la ricerca
+          required: false
+          schema:
+            type: string
+            default: ''
+      responses:
+        "200":
+          description: Successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      type: object
+                  totalResults:
+                    type: integer
+                    description: Numero totale di risultati
+                  page:
+                    type: integer
+                    description: Numero della pagina attuale
+                  totalPages:
+                    type: integer
+                    description: Numero totale di pagine
+                  limit:
+                    type: integer
+                    description: Limite di risultati per pagina
+        "500":
+          description: Errore server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore durante il recupero delle figurine"

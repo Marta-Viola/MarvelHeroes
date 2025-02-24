@@ -5,6 +5,6 @@ import { buyPack } from '../controllers/packsController.js';
 const router = express.Router();
 
 // Rotta per acquistare un pacchetto di figurine
-router.post('/', authMiddleware, buyPack);
+router.post('/buy', authMiddleware, buyPack);
 
 export default router;

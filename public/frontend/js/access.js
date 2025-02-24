@@ -18,7 +18,7 @@ async function registerUser(userData) {
         }
 
         const data = await response.json();
-        alert(data.message);
+        // alert(data.message);
 
         // Se la registrazione ha successo, reindirizza al login
         if (data.redirect) {
@@ -51,7 +51,7 @@ async function loginUser(loginData) {
         // Salva il token nel localStorage
         localStorage.setItem('jwtToken', data.token);
 
-        alert(data.message);
+        // alert(data.message);
 
         // Reindirizza all'homepage
         if (data.redirect) {

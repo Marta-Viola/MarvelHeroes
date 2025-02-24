@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             console.log("figurine in vendita: ", data.data);
             if (data.data.length === 0) {
-                figurinePosseduteContainer.innerHTML = "<li>Nessuna figurina trovata.</li>";
+                figurineInVenditaContainer.innerHTML = "<li>Nessuna figurina trovata.</li>";
             } else {
                 renderFigurineInVendita(data.data);
             }
@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // aggiorna tutto
                 fetchMarket();
                 fetchUserFigurineInVendita();
-                // fetchTradeInUscita??
+                fetchTradeInUscita();
                 figurina0Cointainer.innerHTML = '';
                 figurina1Container.innerHTML = '';
             }
@@ -446,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTradeInUscita(trades) {
         console.log('trades: ', trades);
         
-        if (trades.lenght !== 0) {
+        if (trades.length !== 0) {
             tradeUscitaContainer.innerHTML = '';
 
             trades.forEach(trade => {
@@ -508,7 +508,16 @@ document.addEventListener('DOMContentLoaded', () => {
     
                 tradeUscitaContainer.appendChild(tr);
             });
-        }  
+        }  else {
+            tradeUscitaContainer.innerHTML = 
+                `<tr class="bg-light">
+                    <td colspan="4" class="text-muted py-3">Nessuna proposta disponibile</td>
+                </tr>
+                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>`;
+        }
     }
 
     //funzione per fetchare i trade in entrata
@@ -546,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTradeInEntrata(trades) {
         console.log('trades: ', trades);
 
-        if (trades.lenght !== 0) {
+        if (trades.length !== 0) {
             tradeEntrataContainer.innerHTML = '';
 
             trades.forEach(trade => {
@@ -649,6 +658,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 tradeEntrataContainer.appendChild(tr);
             });
+        } else {
+            tradeEntrataContainer.innerHTML = 
+                `<tr class="bg-light">
+                    <td colspan="4" class="text-muted py-3">Nessuna proposta disponibile</td>
+                </tr>
+                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>`;
         }
     }
 
@@ -700,6 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 renderTradeAccettato(data.tradeDetails);
                 fetchTradeInEntrata();
+                fetchMarket();
             }
 
             // bisogna mostrare il trade appena accettato

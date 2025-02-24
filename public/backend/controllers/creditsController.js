@@ -24,6 +24,7 @@ export const buyCredits = async (req, res) => {
 
         // Risponde con il numero aggiornato di crediti
         res.json({ message: 'Crediti aggiunti con successo.', credits: user.credits });
+        
     } catch (error) {
         console.error('Errore durante l\'aggiunta dei crediti:', error);
         res.status(500).json({ error: 'Errore durante l\'aggiunta dei crediti'});

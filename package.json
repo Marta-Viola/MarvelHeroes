@@ -24,10 +24,13 @@
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "md5": "^2.3.0",
     "mongoose": "^8.8.0",
     "node-fetch": "^3.3.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.5"
   }
 }

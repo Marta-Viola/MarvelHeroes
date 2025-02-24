@@ -33,11 +33,13 @@ export const signup = async (req, res) => {
             figurinePossedute: [],
             figurineInVendita: []
         });
+
         //salva l'utente nel database
         await newUser.save();
 
         //reindirizza alla pagina di login
         res.status(201).json({ message: 'Utente creato con successo', redirect: '/api/login' });
+
     } catch(err) {
         console.error('Errore nella registrazione', err);
         res.status(500).json({ error: 'Errore interno del server' });
@@ -64,6 +66,7 @@ export const login = async (req, res) => {
             token,
             user: { username: user.username, email: user.email, hero: user.hero, credits: user.credits }
          });
+         
     } catch (err) {
         console.error('Errore durante il login:', err);
         res.status(500).json({ error: 'Errore interno del server' });

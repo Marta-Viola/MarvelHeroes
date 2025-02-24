@@ -29,7 +29,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message);
                 userCreditsDisplay.textContent = `Crediti attuali: ${data.credits}`;
                 creditsInput.value = '';    // pulisce il contenuto dell'input dopo l'acquisto.
             } else {
