@@ -13,12 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let totalPages = 1;
     let query = "";
 
-    // funzione per ottenere i parametri dell'URL
-    // function getQueryParam(param) {
-    //     const urlParams = new URLSearchParams(window.location.search);
-    //     return urlParams.get(param) || "";
-    // }
-
     // funzione per aggiornare l'URL senza ricaricare la pagina
     function updateURL(page, query) {
         const url = new URL(window.location);
@@ -53,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
             currentPage = data.page;
             totalPages = data.totalPages;
             updatePagination(currentPage, totalPages);
+
         } catch (error) {
             console.error(error);
             alert("Errore durante il caricamento dell\'album");
@@ -93,13 +88,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updatePagination(page, totalPages) {
-        //currentPage = page;
         pageInfo.textContent = `${page} / ${totalPages}`;
         prevButton.disabled = page === 1;
         nextButton.disabled = page === totalPages;
     }
 
-    // evento di submit per la ricerca...
+    // evento di submit per la ricerca
     searchForm.addEventListener("submit", (e) => {
         e.preventDefault();
         query = searchInput.value.trim();

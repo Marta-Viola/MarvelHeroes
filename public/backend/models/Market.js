@@ -1,16 +1,16 @@
-// modello della collezione Market: conterrà tutte le figurine messe a mercato
-// di ogni elemento voglio salvare:
+// modello della collezione Market: contiene tutte le figurine messe a mercato
+// di ogni elemento salva:
 //      - id dell'utente che ha messo la figurina a mercato
-//      - id della figurina
+//      - id del personaggio
 //      - data di creazione della proposta
+//      - id dell'oggetto figurina
 
 import mongoose from 'mongoose';
-import User from './User.js';
 
 const MarketSchema = new mongoose.Schema({
-    idUtente: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // riferimento all'utente che ha messo la figurina a mercato
-    idPersonaggio: { type: Number, required: true }, // id della figurina
-    data: { type: Date, default: Date.now }, // data di creazione della proposta
+    idUtente: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    idPersonaggio: { type: Number, required: true },
+    data: { type: Date, default: Date.now },
     idFigurinaObj: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 });
 

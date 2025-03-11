@@ -69,7 +69,7 @@ async function initializeFigurineGrid(token) {
 
             // Mostra un messaggio se non ci sono risultati
             if (data.results.length === 0) {
-                renderNoResultsMessage();    // funzione per il messaggio
+                renderNoResultsMessage();
                 updatePagination(0, 0);
                 return;   
             }
@@ -90,7 +90,7 @@ async function initializeFigurineGrid(token) {
     //Funzione per resettare la griglia
     function resetGrid() {
         gridContainer.innerHTML = '';   //Svuota la griglia
-        renderNoResultsMessage();   //mostra il messaggio per default
+        renderNoResultsMessage();   //mostra il messaggio di default
         totalPages = 0;
         updatePagination(0, 0); //Disabilita la paginazione
     }
@@ -117,7 +117,7 @@ async function initializeFigurineGrid(token) {
     });
 
     function renderFigurine(figurine) {
-        gridContainer.innerHTML = ''; // Pulisci la griglia precedente
+        gridContainer.innerHTML = '';
         
         figurine.forEach(item => {
             const col = document.createElement('div');
@@ -167,7 +167,7 @@ async function initializeFigurineGrid(token) {
 
     function renderNoResultsMessage() {
         const gridContainer = document.getElementById('grid-container');
-        gridContainer.innerHTML = '';   //svuota la griglia
+        gridContainer.innerHTML = '';
 
         const noResultsMessage = document.createElement('p');
         noResultsMessage.textContent = 'Nessun risultato trovato.';
@@ -200,10 +200,10 @@ async function initializeFigurineGrid(token) {
 
     searchInput.addEventListener('keydown', (event) => {
         if (event.key === 'Enter') {
-            event.preventDefault(); //evita il comportamento predefinito
+            event.preventDefault();                    // evita il comportamento predefinito
             searchQuery = searchInput.value.trim();    // aggiorna la variabile con la query dell'utente
-            currentPage = 1;    //resetta alla pagina 1 per una nuova ricerca
-            fetchFigurine(currentPage, searchQuery);    //richiama fetchFigurine
+            currentPage = 1;                           // resetta alla pagina 1 per una nuova ricerca
+            fetchFigurine(currentPage, searchQuery);   // richiama fetchFigurine
         }
     })
 

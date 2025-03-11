@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = '/login.html';
         return;
     }
+    
     // elementi necessari alla pagina
     const creditsElement = document.getElementById('credits');
     const buyButton = document.getElementById('buy-pack');

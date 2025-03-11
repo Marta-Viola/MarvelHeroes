@@ -1,10 +1,9 @@
 import User from '../models/User.js';
 import fetch from 'node-fetch';
-import authMiddleware from '../middlewares/auth.js';
 import { getHash } from '../utils/hashUtils.js';
 
 // funzone per ottenere 5 figurine casuali dalle API marvel
-export const getRandomMarvelCharacters = async () => {
+const getRandomMarvelCharacters = async () => {
     try {
         const marvel_ts = process.env.MARVEL_TS || '1';
         const marvel_private = process.env.MARVEL_PRIVATE;
@@ -18,7 +17,7 @@ export const getRandomMarvelCharacters = async () => {
         // Genera l'hash per l'autenticazione
         const marvel_hash = getHash(marvel_ts, marvel_public, marvel_private);
 
-        const maxCharacters = 1564; // Numero di perssonaggi nell'API Marvel
+        const maxCharacters = 1564; // Numero di personaggi nell'API Marvel
         const promises = [];
 
         for (let i = 0; i < 5; i++) {

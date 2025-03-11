@@ -531,6 +531,51 @@ paths:
                 properties:
                   error:
                     type: string
+    delete:
+      description: cancella il profilo utente
+      operationId: deleteProfile
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: confirmPassword
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Profilo cancellato correttamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Profilo cancellato correttamente.'
+        "401":
+          description: Password non valida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'password non valida.'
+        "500":
+          description: Cancellazione profilo fallita
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: 'cancellazione profilo fallita.'
 
   /api/packs/buy:
     post:

@@ -18,12 +18,12 @@ async function registerUser(userData) {
         }
 
         const data = await response.json();
-        // alert(data.message);
 
         // Se la registrazione ha successo, reindirizza al login
         if (data.redirect) {
             window.location.href = data.redirect;
         }
+
     } catch (error) {
         console.error('Errore nella registrazione:', error);
         alert(error.message);
@@ -51,12 +51,11 @@ async function loginUser(loginData) {
         // Salva il token nel localStorage
         localStorage.setItem('jwtToken', data.token);
 
-        // alert(data.message);
-
         // Reindirizza all'homepage
         if (data.redirect) {
             window.location.href = data.redirect;
         }
+        
     } catch (error) {
         console.error('Errore nel login:', error);
         alert(error.message);

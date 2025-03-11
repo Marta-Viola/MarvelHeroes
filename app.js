@@ -5,11 +5,7 @@ import path from 'path';
 import connectDB from './public/backend/config/db.js';
 import authRoutes from './public/backend/routes/authRoutes.js';
 import dotenv from 'dotenv';
-import authMiddleware from './public/backend/middlewares/auth.js';
-// import md5 from 'md5';
 import profileRoutes from './public/backend/routes/profileRoutes.js';
-// import fetch from 'node-fetch';
-// import crypto from 'crypto';
 import figurineRoutes from './public/backend/routes/figurineRoutes.js';
 import creditsRoutes from './public/backend/routes/creditsRoutes.js';
 import packsRoutes from './public/backend/routes/packsRoutes.js';
@@ -18,7 +14,6 @@ import marketRoutes from './public/backend/routes/marketRoutes.js';
 
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
-import yaml from 'js-yaml';
 
 //configurazioni
 dotenv.config();
@@ -89,7 +84,6 @@ app.listen(port, () => {
 });
 
 //percorso assoluto
-// const __filename = fileURLToPatch(import.meta.url);
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, 'public')));
 

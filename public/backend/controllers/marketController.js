@@ -221,7 +221,7 @@ export const getMarket = async (req, res) => {
 
 // *** l'utente vuole proporre un trade ***
 
-// funzione per ottenere i dati da un oggetto mercato!
+// funzione per ottenere i dati da un oggetto mercato
 export const getMarket1Element = async (req, res) => {
     try {
         // ottiene l'user
@@ -242,7 +242,7 @@ export const getMarket1Element = async (req, res) => {
         // controllo => non puoi tradare con te stesso
         if (userId === marketElement.idUtente.toString()) {
             alert('non puoi barattare con te stesso!');
-            return res.status(400).json({ error: 'Non puoi tradare con te stesso!' });
+            return res.status(400).json({ error: 'Non puoi barattare con te stesso!' });
         }
 
         // ricava la figurina da marketElement
@@ -263,7 +263,7 @@ export const getMarket1Element = async (req, res) => {
     }
 }
 
-// Market0 va trovato, il frontend ci restituisce l'id user e l'id figurina, noi troviamo l'elemento market corrispondente
+// Market0 va trovato, il frontend ci restituisce l'id user e l'id figurina, poi trova l'elemento market corrispondente
 export const getMarket0Element = async (req, res) => {
     try {
         // ottiene l'user
@@ -403,7 +403,7 @@ async function getMarketDetails(marketId) {
     return { idUser, idFig, idFigurinaObj };
 }
 
-// funzione per ottenere i dettagli dei trade in uscita dell'utente
+// funzione per ottenere i dettagli dei trade
 async function getTradeDetails(tradeIds) {
     const trades = await Trade.find({ _id: { $in: tradeIds } }).exec();
 
@@ -511,7 +511,7 @@ export const rejectTrade = async (req, res) => {
 
                     await user0.save();
 
-                    // cambiare lo stato in 'rifiutato'
+                    // cambia lo stato in 'rifiutato'
                     trade.status = 'rifiutato';
                     await trade.save();
 
@@ -574,10 +574,10 @@ export const acceptTrade = async (req, res) => {
                     // user0 riceve fig1 da figurineInVendita di user1
                     const fig1ToMove = user1.figurineInVendita.id(trade.idFig1Obj);
 
-                    // aggiungi a figurinePossedute di user0
+                    // aggiunge a figurinePossedute di user0
                     user0.figurinePossedute.push(fig1ToMove);
 
-                    // rimuovi da figurineInVendita di user1
+                    // rimuove da figurineInVendita di user1
                     const index1 = user1.figurineInVendita.findIndex(figurina => figurina._id === fig1ToMove._id);
                     if (index1 !== -1) {
                         user1.figurineInVendita.splice(index1, 1);
@@ -591,11 +591,11 @@ export const acceptTrade = async (req, res) => {
                     await user0.save({ sessionAccept });
                     await user1.save({ sessionAccept });
 
-                    // cambiare lo stato in 'accettato'
+                    // cambia lo stato in 'accettato'
                     trade.status = 'accettato';
                     await trade.save({ sessionAccept });
 
-                    const deletedMarket1 = await Market.findByIdAndDelete(trade.market1, { sessionAccept }); // SI MA NON LO CANCELLA
+                    const deletedMarket1 = await Market.findByIdAndDelete(trade.market1, { sessionAccept });
                     if (!deletedMarket1) {
                         console.error('non ho cancellato l\'elemento market1: ', trade.market1, ' ', deletedMarket1);
                     }

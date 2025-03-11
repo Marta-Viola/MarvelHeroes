@@ -1,20 +1,18 @@
-// modello della collezione Trade: conterrà tutti i trade (nati, vivi e morti)
-// di ogni trade voglio salvare:
+// modello della collezione Trade: conterrà tutti i trade (pendenti, accettati e rifiutati)
+// di ogni trade salva:
 //      - id dell'utente che lo propone (user0)
-//      - id della figurina dell'utente che lo propone (fig0)
-//      - id della figurina entrante (fig1)
+//      - id del personaggio dell'utente che lo propone (fig0)
+//      - id del personaggio entrante (fig1)
 //      - id dell'utente che lo riceve (user1)
 //      - data di ultima modifica del trade
 //      - stato del trade, che può essere:
 //          - pendente
 //          - accettato
 //          - rifiutato
-
-// più che l'id della figurina, sarebbe meglio usare l'_id dell'oggetto market...
+//      - id dell'oggetto figurina uscente
+//      - id dell'oggetto figurina entrante
 
 import mongoose from 'mongoose';
-import Market from './Market.js';
-import User from './User.js';
 
 const TradeSchema = new mongoose.Schema({
     market0: { type: mongoose.Schema.Types.ObjectId, ref: 'Market', required: true },

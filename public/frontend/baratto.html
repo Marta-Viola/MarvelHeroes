@@ -11,10 +11,9 @@
         <link href="/frontend/css/figurine.css" rel="stylesheet">
     </head>
     <body class="d-flex h-100 text-center bg-darkred text-white">
-        <!--Bootstrap Bundle con Popper (?)-->
+        <!--Bootstrap Bundle con Popper-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
         
-        <!--header-->
         <div class="w-100">
             <nav class="py-2">
                 <div class="container d-flex flex-wrap">
@@ -48,7 +47,6 @@
             <header class="py-3 mb-4">
                 <div class="container d-flex flex-wrap justify-content-between">
                     <a href="" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto text-light text-decoration-none">
-                        <!-- <svg class="bi me-2" width="40" height="32"></svg> -->
                         <span class="fs-4 text-white">MarvelHeroes </span>
                     </a>
                     <span class="fs-4 text-white" id="username-span"></span>
@@ -67,25 +65,6 @@
                                 </tr>
                             </thead>
                             <tbody id="marketplace-table">
-                                <tr class="bg-light">
-                                    <td colspan="3" class="text-muted py-3">Nessuna offerta disponibile</td>
-                                </tr>
-                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                                <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                                <!-- riga di esempio: -->
-                                <!-- <tr>
-                                    <td><strong>MarioRossi</strong></td>
-                                    <td>
-                                        <img src="https://via.placeholder.com/40" alt="Figurina" class="rounded-circle me-2">
-                                        <span>Iron Man</span>
-                                    </td> -->
-                                    <!-- <td>Scambio per una figurina rara</td> -->
-                                    <!-- <td>
-                                        <button class="btn btn-primary btn-sm">Proponi</button>
-                                    </td>
-                                </tr> -->
                                 <!-- qui dati caricati dinamicamente -->
                             </tbody>
                         </table>
@@ -98,16 +77,6 @@
                             <h5 class="text-center text-light mt-2">Le Tue Figurine</h5>
                             <div class="border-rounded p-2" style="max-height: 300px; overflow-y: auto;">
                                 <ul id="figurine-possedute-list" class="list-group">
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
-                                    <!-- <li class="list-group-item d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-input me-2">
-                                        <img src="https://via.placeholder.com/40" alt="Figurina" class="rounded me-2">
-                                        <span>Spider-Man</span>
-                                    </li> -->
                                     <!-- figurine possedute caricate qui -->
                                 </ul>
                             </div>
@@ -119,17 +88,6 @@
                             <h5 class="text-center text-light mt-2">Le Tue Figurine sul Mercato</h5>
                             <div class="border-rounded p-2" style="max-height: 300px; overflow-y: auto;">
                                 <ul id="figurine-sul-mercato-list" class="list-group">
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
-                                    <!-- <li class="list-group-item d-flex align-items-center">
-                                        <input type="checkbox" class="form-check-input me-2">
-                                        <img src="https://via.placeholder.com/40" alt="Figurina" class="rounded me-2">
-                                        <span>Captain America</span>
-                                    </li> -->
-                                    <!-- figurine sul mercato caricate qui -->
                                 </ul>
                             </div>
                             <div class="d-flex justify-content-between mt-2">
@@ -185,13 +143,6 @@
                                         </tr>
                                     </thead>
                                     <tbody id="proposte-scambio-list">
-                                        <tr class="bg-light">
-                                            <td colspan="4" class="text-muted py-3">Nessuna proposta disponibile</td>
-                                        </tr>
-                                        <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                                        <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                                        <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-                                        <tr class="bg-light"><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
                                         <!-- proposte di scambio caricate qui -->
                                     </tbody>
                                 </table>
@@ -244,9 +195,5 @@
             </footer>
         </div>
         <script src="/frontend/js/market.js"></script>
-        <!-- <script src="/frontend/js/homepage.js" defer></script> -->
-        <!-- <script src="/frontend/js/market-display.js"></script>
-        <script src="/frontend/js/user-figurine.js"></script>
-        <script src="/frontend/js/market-figurine.js"></script> -->
     </body>
 </html>

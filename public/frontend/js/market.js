@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // elementi della sezione 1
     const marketTableBody = document.getElementById('marketplace-table');
-    // var market1Button = document.getElementById('market1-btn');
 
     // elementi della sezione 2
     const figurinePosseduteContainer = document.getElementById('figurine-possedute-list');
@@ -147,12 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const name = document.createElement('span');
             name.textContent = fig.name;
-            // name.classList.add('text-light');
-            // console.log("nome del personaggio: ", name);
             li.appendChild(name);
 
             if (figurineInVenditaContainer) figurineInVenditaContainer.appendChild(li);
-            else console.error('figurineInVenditaContainer è undefined..');
+            else console.error('figurineInVenditaContainer è undefined.');
             
         });
     }
@@ -204,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
             figurina.appendChild(name);
             tr.appendChild(figurina);
 
-            // bottone per proporre il baratto, vorrei che contenesse l'id dell'elemento Market!!!
+            // bottone per proporre il baratto
             const baratto = document.createElement('td');
             baratto.id = elemento.marketId;
             const button = document.createElement('button');
@@ -232,8 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             if (!response.ok) throw new Error("Errore durante l'aggiunta delle figurine al mercato.");
 
-            // const figurineInVendita = await response.json();
-
             // aggiorna il mercato
             fetchMarket();
             
@@ -242,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // aggiorna le figurine possedute
             fetchUserFigurine();
+
         } catch (error) {
             console.error("errore nell'aggiunta delle figurine al mercato:", error);
             alert("errore nell'aggiunta delle figurine al mercato");
@@ -272,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // funzione per ottenere market0
-    // deve mandare l'id della figurina!!
+    // manda l'id della figurina
     async function fetchMarket0(fig0Id) {
         try {
             console.log('fig0Id = ', fig0Id);
@@ -394,8 +390,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.length === 0) {
                 console.log('non arrivano i dati del trade');
             } else {
-                // fetchProposteInUscita(data);
-
                 // aggiorna tutto
                 fetchMarket();
                 fetchUserFigurineInVendita();
@@ -494,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // status
                 const status = document.createElement('td');
                 if (trade.status === 'pendente') {
-                    // colore arancione
+                    // colore giallo
                     status.classList.add('text-warning');
                 } else if (trade.status === 'accettato') {
                     // colore verde
@@ -560,9 +554,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             trades.forEach(trade => {
                 const tr = document.createElement('tr');
-                // tr.classList.add('bg-light');
                 if (trade.status === 'pendente') {
-                    // colore arancione
+                    // colore giallo
                     tr.classList.add('bg-warning', 'bg-opacity-75');
                 } else if (trade.status === 'accettato') {
                     // colore verde
@@ -575,13 +568,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // utente
                 const user0 = document.createElement('td');
                 user0.textContent = trade.username0; 
-                // console.log('(renderTableInEntrata) trade.username0: ', trade.username0);
                 user0.classList.add('fw-bold');
                 tr.appendChild(user0);
     
                 // ti da
                 const fig0 = document.createElement('td');
-                // fig0.classList.add('float-left');
                 const divFig0 = document.createElement('div');
                 divFig0.classList.add('d-flex', 'align-items-center');
                 
@@ -603,7 +594,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
                 // in cambio di
                 const fig1 = document.createElement('td');
-                // fig1.classList.add('float-left');
                 const divFig1 = document.createElement('div');
                 divFig1.classList.add('d-flex', 'align-items-center');
     
@@ -623,12 +613,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 fig1.appendChild(divFig1);
                 tr.appendChild(fig1);
     
-                // azioni!
+                // azioni
                 // bottoni per accettare o rifiutare il trade
                 const actions = document.createElement('td');
                 const divActions = document.createElement('div');
                 divActions.classList.add('d-flex', 'flex-wrap', 'justify-content-between');
-                // actions.classList.add('d-flex', 'justify-content-between');
                 
                 if (trade.status === 'pendente') {
                     const acceptButton = document.createElement('button');
@@ -717,18 +706,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log('non arrivano i dati del trade accettato.');
             } else {
                 renderTradeAccettato(data.tradeDetails);
+                fetchUserFigurine();
+                fetchUserFigurineInVendita();
                 fetchTradeInEntrata();
                 fetchMarket();
             }
-
-            // bisogna mostrare il trade appena accettato
-            // ma abbiamo i figObj = {(int) idPersonaggio, (String) nome, (obj) _id}
-            // manca solo l'immagine T-T
-
-            // data ora è tradeDetails yay
-
-            // qui c'è un errore perché l'accettazione non va abuon fineee
-            // ah... avevo messo /reject come trade... quindi ora il trade è rifiutato :(
 
         } catch (error) {
             console.error('Errore durante l\'accettazione del trade', error);
@@ -743,8 +725,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 'con'
         userTraderSpan.innerText = trade.username1;
-
-        console.log('(renderTradeAccettazione) trade.fig1name: ', trade.fig1name);
 
         // 'hai dato' => fig1
         figurinaOutContainer.innerHTML =
@@ -800,7 +780,3 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchTradeInEntrata();
     fetchTradeInUscita();
 });
-
-// ho bisogno di un qualcosa che selezionata una figurina con la checkbox, mi trovi l'id market corrispondente, così da poterlo mandare al backend
-// oppure mando l'id utente e l'id figurina e faccio trovare l'id market al backend...
-// proviamo così, usando getSelectedInVenditaIds()

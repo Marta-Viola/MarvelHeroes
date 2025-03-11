@@ -1,5 +1,7 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import Market from '../models/Market.js';
+import { comparePassword } from '../utils/authUtils.js';
 
 // Ottiene il profilo utente
 export const getProfile = async (req, res) => {
@@ -41,7 +43,6 @@ export const updateProfile = async (req, res) => {
 
         // Aggiorna gli altri campi solo se forniti
         if (username) user.username = username;
-        //if (email) user.email = email;
         if (hero) user.hero = hero;
 
         await user.save();
@@ -49,5 +50,34 @@ export const updateProfile = async (req, res) => {
     } catch (error) {
         console.error('Errore durante l\'aggiornamento del profilo:', error);
         res.status(500).json({ message: 'Errore durante l\'aggiornamento del profilo' });
+    }
+};
+
+// cancella il profilo utente
+export const deleteProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const confirmPassword = req.body.confirmPassword;
+
+        // trova l'user tramite l'id e controlla che la password sia giusta
+        const user = await User.findById(userId);
+        const userPassword = user.password;
+        if (!user || !comparePassword(confirmPassword, userPassword)) {
+            return res.status(401).json({ error: 'password non valida.' });
+        }
+
+        // cancella tutti gli elementi a mercato dell'utente
+        await Market.deleteMany({ idUtente: userId });
+
+        // cancella il profilo
+        await User.findByIdAndDelete(userId);
+
+        // // logout
+        // req.logout();
+
+        res.json({ message: 'Profilo cancellato correttamente.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'cancellazione profilo fallita.' });
     }
 };
